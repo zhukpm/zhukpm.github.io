@@ -1,0 +1,78 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- VZ Neural Network Logo - Connected Letters -->
+
+  <!-- Background connections to small nodes -->
+  <g stroke="#1F3683" stroke-width="1" fill="none" opacity="0.4">
+    <!-- Connections from main nodes to small decorative nodes -->
+    <line x1="30" y1="50" x2="25" y2="70"/>
+    <line x1="50" y1="95" x2="35" y2="85"/>
+    <line x1="70" y1="140" x2="85" y2="125"/>
+    <line x1="110" y1="50" x2="95" y2="35"/>
+    <line x1="140" y1="95" x2="155" y2="90"/>
+    <line x1="160" y1="140" x2="165" y2="120"/>
+    <line x1="90" y1="95" x2="105" y2="110"/>
+    <line x1="140" y1="50" x2="130" y2="30"/>
+    <line x1="110" y1="140" x2="100" y2="155"/>
+  </g>
+
+  <!-- Main letter connections (thicker) -->
+  <g stroke="#1F3683" stroke-width="4" fill="none" opacity="0.7">
+    <!-- V shape -->
+    <line x1="30" y1="50" x2="50" y2="95"/>
+    <line x1="50" y1="95" x2="70" y2="140"/>
+    <line x1="70" y1="140" x2="90" y2="95"/>
+    <line x1="90" y1="95" x2="110" y2="50"/>
+
+    <!-- Z shape -->
+    <line x1="110" y1="50" x2="140" y2="50"/>
+    <line x1="140" y1="50" x2="160" y2="50"/>
+    <line x1="160" y1="50" x2="140" y2="95"/>
+    <line x1="140" y1="95" x2="110" y2="140"/>
+    <line x1="110" y1="140" x2="140" y2="140"/>
+    <line x1="140" y1="140" x2="160" y2="140"/>
+  </g>
+
+  <!-- Inter-letter connections -->
+  <g stroke="#1F3683" stroke-width="1.5" fill="none" opacity="0.3" stroke-dasharray="2,2">
+    <line x1="70" y1="140" x2="110" y2="140"/>
+    <line x1="90" y1="95" x2="140" y2="95"/>
+  </g>
+
+  <!-- Main neural network nodes -->
+  <g fill="#1F3683">
+    <!-- V nodes -->
+    <circle cx="30" cy="50" r="7"/>
+    <circle cx="50" cy="95" r="7"/>
+    <circle cx="70" cy="140" r="9"/> <!-- Bottom center of V -->
+    <circle cx="90" cy="95" r="7"/>
+
+    <!-- Shared node between V and Z -->
+    <circle cx="110" cy="50" r="8"/> <!-- Slightly larger as it's shared -->
+
+    <!-- Z nodes -->
+    <circle cx="140" cy="50" r="7"/>
+    <circle cx="160" cy="50" r="7"/>
+    <circle cx="140" cy="95" r="7"/> <!-- Single middle node -->
+    <circle cx="110" cy="140" r="7"/>
+    <circle cx="140" cy="140" r="7"/>
+    <circle cx="160" cy="140" r="7"/>
+  </g>
+
+  <!-- Decorative network nodes - more visible and randomly distributed -->
+  <g fill="#1F3683" opacity="0.5">
+    <circle cx="25" cy="70" r="3"/>
+    <circle cx="35" cy="85" r="3"/>
+    <circle cx="85" cy="125" r="3"/>
+    <circle cx="95" cy="35" r="3"/>
+    <circle cx="155" cy="90" r="3"/>
+    <circle cx="165" cy="120" r="3"/>
+    <circle cx="105" cy="110" r="3"/>
+    <circle cx="130" cy="30" r="3"/>
+    <circle cx="100" cy="155" r="3"/>
+    <circle cx="65" cy="60" r="3"/>
+    <circle cx="125" cy="70" r="3"/>
+    <circle cx="45" cy="115" r="3"/>
+    <circle cx="150" cy="115" r="3"/>
+    <circle cx="75" cy="35" r="3"/>
+  </g>
+</svg>

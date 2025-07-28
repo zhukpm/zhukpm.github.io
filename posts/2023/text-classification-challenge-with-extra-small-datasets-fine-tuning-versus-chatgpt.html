@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT – Viacheslav Zhukov</title>
+<meta charset="utf-8"/>
+<meta content="Viacheslav Zhukov Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT  Machine Learning Text Classification Data Science ChatGPT RoBERTa GPT LLMs" name="keywords"/>
+<meta content="https://zhukpm.github.io/og-image.png" property="og:image"/>
+<meta content="LLMs excel on extra-small datasets, but classical approaches shine as datasets grow" name="description"/>
+<meta content="ChatGPT" name="tags"/>
+<meta content="Data Science" name="tags"/>
+<meta content="GPT" name="tags"/>
+<meta content="LLMs" name="tags"/>
+<meta content="Machine Learning" name="tags"/>
+<meta content="RoBERTa" name="tags"/>
+<meta content="Text Classification" name="tags"/>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://zhukpm.github.io/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://zhukpm.github.io/logo_rounded.png" rel="icon"/>
+<script>
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+
+        </script>
+<link href="https://zhukpm.github.io/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://zhukpm.github.io"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://zhukpm.github.io/posts"}, {"@type": "ListItem", "position": 3, "name": "2023", "item": "https://zhukpm.github.io/posts/2023"}, {"@type": "ListItem", "position": 4, "name": "Text classification challenge with extra small datasets fine tuning versus chatgpt", "item": "https://zhukpm.github.io/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt.html"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "author": {"@type": "Person", "name": "Viacheslav Zhukov"}, "publisher": {"@type": "Organization", "name": "Viacheslav Zhukov", "logo": {"@type": "ImageObject", "url": "http://127.0.0.1:8000/logo_rounded.png"}}, "headline": "Text classification challenge with extra-small datasets: Fine-tuning versus&nbsp;ChatGPT", "about": "Natural Language Processing", "datePublished": "2023-07-07 14:00"}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<h1><a href="https://zhukpm.github.io/">Viacheslav Zhukov</a></h1>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://zhukpm.github.io/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://zhukpm.github.io/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt" rel="bookmark" title="Permalink to Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</h1>
+</header>
+<section class="entry-content">
+<p>Originally published on <a href="https://towardsdatascience.com/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt-6348fecea357" target="_blank">Towards Data Science</a>.</p>
+<p><img alt="Photo by Debby Hudson on Unsplash" class="image-process-crisp" src="https://zhukpm.github.io/images/001/derivatives/crisp/1x/thumb.jpg" srcset="https://zhukpm.github.io/images/001/derivatives/crisp/1x/thumb.jpg 1x, https://zhukpm.github.io/images/001/derivatives/crisp/2x/thumb.jpg 2x, https://zhukpm.github.io/images/001/derivatives/crisp/4x/thumb.jpg 4x"/></p>
+<div class="caption">
+<p>Photo by <a href="https://unsplash.com/de/@hudsoncrafted" target="_blank">Debby Hudson</a> on <a href="https://unsplash.com" target="_blank">Unsplash</a></p>
+</div>
+<p>The Toloka <span class="caps">ML</span> team continually researches and compares different approaches to text classification under various conditions. Here we present another one of our experiments on the performance of <span class="caps">NLP</span> models when trained on extra-small datasets.</p>
+<p>Previously, we provided a <a href="https://zhukpm.github.io/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">brief overview of potential solutions</a> and <a href="https://www.kdnuggets.com/2023/04/best-architecture-text-classification-task-benchmarking-options.html" target="_blank">compared classical models with large language models (LLMs)</a> for a specific text classification task. However, those comparisons were based on a “regular” dataset that contained enough data points to build a reliable classifier. In real-world scenarios, you may encounter situations where limited data is available or human labeling hasn’t been carried out.</p>
+<p>Intuitively, LLMs such as <span class="caps">GPT</span>-3 or ChatGPT might outperform smaller models due to their extensive “knowledge”. To investigate this hypothesis, we created an artificially small dataset by extracting a portion of a larger one and compared several approaches. We fine-tuned the RoBERTa base model, employed ChatGPT for few-shot classification, and fine-tuned the <span class="caps">GPT</span>-3 Babbage model.</p>
+<h2>The dataset</h2>
+<p>To evaluate the comprehension capabilities of various models, we selected a multiclass dataset consisting of scientific article abstracts. The task was to determine each article’s domain.</p>
+<p>We opted for the <a href="https://data.mendeley.com/datasets/9rw3vkcfy4/6"><span class="caps">WOS</span>-11967</a> dataset, which contains 11,967 documents with 35 categories that include seven parent categories: medical, psychology, computer science, biochemistry, electrical engineering, civil sciences, and mechanical engineering. We sampled 10,000 data points and focused solely on the parent categories for our analysis.</p>
+<p>While the dataset was not perfectly balanced, the class distribution was reasonably proportional. Therefore, satisfactory results could potentially be achieved across all classes. The class distribution is illustrated below.</p>
+<p><img alt="The class distribution of the sample of the WOS-11967 dataset" class="image-process-article-image" src="https://zhukpm.github.io/images/001/derivatives/article-image/distribution.png"/></p>
+<div class="caption">
+<p>The class distribution of the sample of the <a href="https://paperswithcode.com/dataset/web-of-science-dataset"><span class="caps">WOS</span>-11967</a> dataset</p>
+</div>
+<p>Upon manual analysis, we found that determining the domain of some abstracts was relatively straightforward, while in other cases, the task became more challenging. For instance, computer science articles may discuss mathematical topics, or psychology articles might contain medical or biochemical terms and abbreviations, making it difficult to distinguish them from biochemistry or medical domains. The abstracts also varied significantly in length, with a mean of 274 tokens (ChatGPT tokens) and a standard deviation of 115 tokens.</p>
+<p>To simulate scenarios involving extra-small datasets, we performed a train-test split on the corpora and allocated a small number of samples to the training set. We repeated this process three times with different training set sizes to evaluate any changes in performance in the models based on the available training data. We created three splits for our experiment: <span class="caps">WOS</span>-11967-s200 (200 samples in the training set, 9,800 samples in the test set), <span class="caps">WOS</span>-11967-s500 (500 / 9,500), and <span class="caps">WOS</span>-11967-s2000 (2,000 / 8,000).</p>
+<p>Now, let’s take a look at the results obtained using different models to tackle these problems.</p>
+<h2>Regular fine-tuning with RoBERTa</h2>
+<p>For our baseline, we selected the <a href="https://huggingface.co/roberta-base">RoBERTa base</a> model and fine-tuned it on the three datasets mentioned earlier. We used the same hyperparameter configuration for each run (a batch size of 32, a learning rate of 3e-5, a linear scheduler with warmup, and a 256-token window), along with early stopping to prevent overfitting.</p>
+<p>We obtained the following results:</p>
+<p><img alt="Fine-tuning results for RoBERTa" class="image-process-article-image" src="https://zhukpm.github.io/images/001/derivatives/article-image/ft-results.png"/></p>
+<p>The data shows that 200 samples are insufficient when it comes to extracting all the necessary patterns and information required to accurately classify the abstracts. The lower macro-average F1 score also indicates that the model underperforms on under-represented classes like mechanical engineering. This suggests that it’s not enough to have only a few samples from a particular class.</p>
+<p>As expected, the model’s performance improved as the amount of available data increased – ultimately resulting in robust performance for multiclass classification across seven classes.</p>
+<h2>Few-shot with ChatGPT</h2>
+<p>The second approach we explored was few-shot classification using ChatGPT. This method differs significantly from traditional classification as it doesn’t involve training a model per se. Instead, we engineered the input prompt to achieve optimal performance.</p>
+<p>However, it was impossible to feed all 200 samples into the model due to its 4096-token context size limit. Given the measurements above, we could only present around 14 abstracts to the model. That number was further reduced when considering the tokens used for instructions and delimiters.</p>
+<p>Initially, we employed the “system” role for instructions and provided a single example per class to guide the model’s response. We simplified the class names to single tokens while retaining their meaning. This made it easier for the model to select the appropriate category and limit the output to a single token. For instance, “Biochemistry” became “Bio,” and “Computer Science” became “Computer.” Additionally, we restricted the number of tokens generated by providing a list of classes to choose from and instructing the model to return the “Unknown” token if it was unsure about the category.</p>
+<p>Overall, performance with this method was inferior compared to the RoBERTa model trained on just 200 samples. We noticed that the model’s classification ability heavily depended on the supplied prompt. Modifying a single sentence could either improve or worsen the metrics. In some cases, ChatGPT missed categories despite explicit instructions not to do so (which could be a drawback of how we formulated our prompt).</p>
+<p>In a few fringe cases, it produced categories not listed in the instructions, but described the article domains, such as “Math” or “Chemistry”. It’s unclear whether these flaws should be attributed to the model or the dataset. However, according to the validation set, these categories can be corrected using simple rules like changing all instances of “Math” to “Computer”.</p>
+<p>To improve metrics, we tried to use as much data as possible. Since we still couldn’t feed all 200 samples into the model, we devised a two-stage process:</p>
+<ul>
+<li>First, we asked the model to identify similarities between abstracts from a specific domain and generate summaries.</li>
+<li>Second, we incorporated these summaries into the instructions to provide the model with insights about the classes and features identified by the model itself in the first stage.</li>
+</ul>
+<p>This approach allowed us to feed more training data samples into the model; and it worked – we boosted metrics by approximately 10%. Below is the prompt we used to generate these summaries:</p>
+<p><img alt="The prompt for ChatGPT used to extract meaningful information about article domains" class="image-process-article-image" src="https://zhukpm.github.io/images/001/derivatives/article-image/prompt.png"/></p>
+<div class="caption">
+<p>The prompt for ChatGPT used to extract meaningful information about article domains</p>
+</div>
+<p>For each domain, we supplied seven to eight abstracts, resulting in a total of 63 distinct abstracts used to prepare the classification prompt (eight abstracts per seven classes to build summaries and seven abstracts provided as examples in the actual prompt).</p>
+<p>Nevertheless, we instructed the model to respond with “Unknown” if it was uncertain about the class. In the validation set we observed that most “Unknown” responses corresponded to computer science articles. We then replaced all “Unknown” instances with the “Computer” class.</p>
+<p>The resulting classification prompt read as follows:</p>
+<p><img alt="The final prompt for ChatGPT used to classify article abstracts" class="image-process-large-photo" sizes="(min-width: 1200px) 800px, (min-width: 992px) 650px, (min-width: 768px) 718px, 100vw" src="https://zhukpm.github.io/images/001/derivatives/large-photo/800w/final-prompt.png" srcset="https://zhukpm.github.io/images/001/derivatives/large-photo/600w/final-prompt.png 600w, https://zhukpm.github.io/images/001/derivatives/large-photo/800w/final-prompt.png 800w, https://zhukpm.github.io/images/001/derivatives/large-photo/1600w/final-prompt.png 1600w"/></p>
+<div class="caption">
+<p>The final prompt for ChatGPT used to classify article abstracts</p>
+</div>
+<p>Once again, performance was heavily influenced by the prompt and the samples provided. The model also generated several categories outside the target list, requiring manual adjustments to be made based on the validation set. This approach yielded the following results:</p>
+<p><img alt="ChatGPT Results" class="image-process-article-image" src="https://zhukpm.github.io/images/001/derivatives/article-image/chatgpt-results.png"/></p>
+<p>The performance was notably better than fine-tuning a RoBERTa model on 200 samples – and fewer samples were required. However, as the availability of labeled data increased, RoBERTa began to outperform this approach, even with just 500 samples.</p>
+<p>We believe that further performance improvements are possible through proper prompt engineering. Some useful tips and tricks can be found in the <a href="https://www.promptingguide.ai/">Prompting Guide</a>.</p>
+<h2>Fine-tuning a <span class="caps">GPT</span>-3 model</h2>
+<p>For our final approach, we fine-tuned the <span class="caps">GPT</span>-3 Babbage model on these three datasets. We followed the dataset preparation recommendations outlined in the <a href="https://platform.openai.com/docs/guides/model-optimization">OpenAI guide</a> and opted for the default hyperparameters without making any specific adjustments. The training process for each dataset took about 20 minutes, yielding the following results:</p>
+<p><img alt="GPT-3 Results" class="image-process-article-image" src="https://zhukpm.github.io/images/001/derivatives/article-image/gpt3-results.png"/></p>
+<p>The fine-tuned <span class="caps">GPT</span>-3 model delivered impressive results even on the smallest dataset, surpassing both RoBERTa and ChatGPT. As the amount of training data increased, the performance gap between RoBERTa and the tuned <span class="caps">GPT</span>-3 model narrowed. This raised questions about the resources and feasibility of using either option. We discussed the pros and cons of both approaches in our <a href="https://zhukpm.github.io/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">previous articles</a>.</p>
+<h2>Conclusion</h2>
+<p>This experiment demonstrates that our initial hypothesis was correct – larger models trained on more extensive data perform significantly better on extra-small datasets. With proper prompt engineering and few-shot techniques, it’s possible to achieve favorable results.</p>
+<p>However, differences in performance decrease as the dataset size increases. Moreover, an appropriately tailored classical model, such as a domain-adapted RoBERTa model, can sometimes outperform generic LLMs in classification tasks. It can be attributed to the model’s specialized “knowledge” of the subject matter. Furthermore, with the right optimizations, inference using these models can be significantly faster, which is crucial when developing online services.</p>
+<p>All images unless otherwise noted are by the author.</p>
+<h2>Sources</h2>
+<ol>
+<li>Kowsari K, Brown <span class="caps">DE</span>, Heidarysafa M, Jafari Meimandi K, Gerber <span class="caps">MS</span>, Barnes <span class="caps">LE</span>. HDLTex: Hierarchical Deep Learning for Text Classification. In: <em>Machine Learning and Applications (<span class="caps">ICMLA</span>), 2017 16th <span class="caps">IEEE</span> International Conference On</em>. <span class="caps">IEEE</span>; 2017.</li>
+<li>Liu Y, Ott M, Goyal N, et al. RoBERTa: A Robustly Optimized <span class="caps">BERT</span> Pretraining Approach. <em>CoRR</em>. 2019;abs/1907.11692. <a href="http://arxiv.org/abs/1907.11692">http://arxiv.org/abs/1907.11692</a></li>
+</ol>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://zhukpm.github.io/posts/category/natural-language-processing">Natural Language Processing</a> on
+    <time class="published" datetime="2023-07-07T14:00:00+02:00">        7th
+July 2023
+    </time>
+</footer>
+<section class="tags">
+<a href="https://zhukpm.github.io/posts/tag/chatgpt">ChatGPT</a>
+<a href="https://zhukpm.github.io/posts/tag/data-science">Data Science</a>
+<a href="https://zhukpm.github.io/posts/tag/gpt">GPT</a>
+<a href="https://zhukpm.github.io/posts/tag/llms">LLMs</a>
+<a href="https://zhukpm.github.io/posts/tag/machine-learning">Machine Learning</a>
+<a href="https://zhukpm.github.io/posts/tag/roberta">RoBERTa</a>
+<a href="https://zhukpm.github.io/posts/tag/text-classification">Text Classification</a>
+</section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://zhukpm.github.io/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a></li>
+</ul>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://zhukpm.github.io/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://zhukpm.github.io/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://zhukpm.github.io/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://zhukpm.github.io/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p>This website does not use cookies. Server logs contain IP address and user agent info. Using this site means you agree to it. You can read more about it <a href="https://www.google.com/search?q=gdpr" rel="noopener noreferrer" target="_blank">here</a>.</p>
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

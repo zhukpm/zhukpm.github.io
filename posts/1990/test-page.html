@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Handling Arrays in Bash – Viacheslav Zhukov</title>
+<meta charset="utf-8"/>
+<meta content="Viacheslav Zhukov Handling Arrays in Bash  bash arrays scripting test test page unlisted" name="keywords"/>
+<meta content="https://zhukpm.github.io/og-image.png" property="og:image"/>
+<meta content="Learn how to create, manipulate, and iterate over arrays in Bash, including both indexed and associative arrays." name="description"/>
+<meta content="arrays" name="tags"/>
+<meta content="bash" name="tags"/>
+<meta content="scripting" name="tags"/>
+<meta content="test" name="tags"/>
+<meta content="test page" name="tags"/>
+<meta content="unlisted" name="tags"/>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://zhukpm.github.io/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://zhukpm.github.io/logo_rounded.png" rel="icon"/>
+<script>
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+
+        </script>
+<link href="https://zhukpm.github.io/posts/1990/test-page" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://zhukpm.github.io"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://zhukpm.github.io/posts"}, {"@type": "ListItem", "position": 3, "name": "1990", "item": "https://zhukpm.github.io/posts/1990"}, {"@type": "ListItem", "position": 4, "name": "Test page", "item": "https://zhukpm.github.io/posts/1990/test-page.html"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "author": {"@type": "Person", "name": "Viacheslav Zhukov"}, "publisher": {"@type": "Organization", "name": "Viacheslav Zhukov", "logo": {"@type": "ImageObject", "url": "http://127.0.0.1:8000/logo_rounded.png"}}, "headline": "Handling Arrays in&nbsp;Bash", "about": "Natural Language Processing", "datePublished": "1990-02-20 14:25"}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<h1><a href="https://zhukpm.github.io/">Viacheslav Zhukov</a></h1>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://zhukpm.github.io/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://zhukpm.github.io/posts/1990/test-page" rel="bookmark" title="Permalink to Handling Arrays in Bash">Handling Arrays in Bash</a>
+</h1>
+</header>
+<section class="entry-content">
+<p>This post is part <built-in 0x16b933530="" at="" index="" method="" object="" of="" str=""> of the "" series:</built-in></p>
+<ol id="series_parts">
+</ol>
+<p>Working with arrays in Bash can make scripts more flexible and powerful. Below is a quick overview.</p>
+<h2>Creating an Indexed Array</h2>
+<pre><code class="language-bash">fruits=("apple" "banana" "orange")
+echo ${fruits[1]} # banana
+</code></pre>
+<h2>Associative Arrays</h2>
+<pre><code class="language-bash">declare -A capitals
+capitals[France]=Paris
+capitals[Germany]=Berlin
+echo ${capitals[France]}
+</code></pre>
+<pre><code class="language-bash"># List files and directories
+ls -l
+# Change directory
+cd /path/to/directory
+# Create a new directory
+mkdir new_directory
+# Remove a file
+rm file.txt
+# Remove a directory
+rmdir directory_name
+# Copy a file
+cp source_file.txt destination_file.txt
+# Move a file
+mv source_file.txt destination_file.txt
+# Display the contents of a file
+cat file.txt
+# Search for a string in a file
+grep "search_string" file.txt
+</code></pre>
+<p>Bash offers several loop constructs that allow you to iterate over items, run commands repetitively, or wait for a certain condition to be met.</p>
+<div class="math">$$ S\_n = \sum\_{i=1}^{n} i $$</div>
+<h2><code>for</code> Loop</h2>
+<pre><code class="language-bash">for file in *.txt; do
+    echo "Processing $file"
+done
+</code></pre>
+<h2><code>while</code> Loop</h2>
+<pre><code class="language-bash">counter=0
+while [ $counter -lt 5 ]; do
+  echo "Counter is $counter"
+  ((counter++))
+done
+</code></pre>
+<pre><code class="language-python">def handler(event, context):
+    return {
+        "statusCode": 200,
+        "body": "Hello from Lambda!"
+    }
+</code></pre>
+<p>Package dependencies:</p>
+<pre><code class="language-bash">pip install requests -t .
+zip -r function.zip .
+aws lambda update-function-code --function-name my-func --zip-file fileb://function.zip
+</code></pre>
+<h2>Pricing Formula</h2>
+<div class="math">$$ \text{Cost} = \text{Requests} \times 0.20/1M + \text{GB-s} \times 0.00001667 $$</div>
+<h3>Mathematical notation</h3>
+<div class="math">$$ C\_{ij} = A\_{ij} + b_j $$</div>
+<p>If <code>A</code> is a matrix and <code>b</code> is a vector, NumPy automatically expands <code>b</code> across rows.</p>
+<h2>External Resources</h2>
+<ul>
+<li>Official <span class="caps">GNU</span> Bash manual: <a href="https://www.gnu.org/software/bash/manual/">https://www.gnu.org/software/bash/manual/</a></li>
+<li>Quick reference card: <a href="https://devhints.io/bash">https://devhints.io/bash</a></li>
+</ul>
+<h3>Formula Example</h3>
+<p>The size of an indexed array <span class="math">\(A\)</span> is given by:</p>
+<div class="math">$$ |A| = \text{number of elements in } A $$</div>
+<pre><code class="language-yaml">name: Python package
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest
+</code></pre>
+<h3>Equation for reliability</h3>
+<div class="math">$$ R = 1 - (1 - r)^n $$</div>
+<p>Where <span class="math">\(r\)</span> is reliability of a single step, <span class="math">\(n\)</span> is number of parallel redundant steps.</p>
+<h2>Creating a Dockerfile</h2>
+<pre><code class="language-dockerfile">FROM python:3.12-slim
+WORKDIR /app
+COPY . .
+CMD ["python", "main.py"]
+</code></pre>
+<h3>Port mapping formula</h3>
+<div class="math">$$ host\_port : container\_port $$</div>
+<h1>Async/Await Explained in JavaScript</h1>
+<p>Asynchronous programming is fundamental in JavaScript. <code>async</code>/<code>await</code> makes it look synchronous:</p>
+<pre><code class="language-javascript">const fetchData = async () =&gt; {
+  try {
+    const response = await fetch('https://api.example.com/data');
+    const json = await response.json();
+    console.log(json);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+fetchData();
+</code></pre>
+<h2>Promise Flow Diagram</h2>
+<pre><code class="language-mermaid">graph TD;
+  A[Start] --&gt; B{Await Promise};
+  B -- resolved --&gt; C[Continue];
+  B -- rejected --&gt; D[Catch Error];
+</code></pre>
+<p><code>systemd</code> is the default init system on most modern Linux distributions. Writing your own service unit allows you to run scripts automatically at boot.</p>
+<pre><code class="language-ini">[Unit]
+Description=Run backup script every night
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/nightly-backup.sh
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<h1>Testing Links Everywhere</h1>
+<p>Welcome to link heaven:</p>
+<ul>
+<li>External: <a href="https://example.com">https://example.com</a></li>
+<li><span class="caps">RFC</span> <span class="caps">PDF</span>: <a href="https://www.rfc-editor.org/rfc/rfc2616.pdf"><span class="caps">RFC</span> 2616</a></li>
+<li>Email: <a href="mailto:someone@example.com">someone@example.com</a></li>
+<li>Tel: <tel:+1234567890></tel:+1234567890></li>
+<li>Hash link to <a href="#another-section">Section</a></li>
+</ul>
+<h2>Another Section</h2>
+<p>Numbers in links: <a href="https://www.iana.org/domains/example">https://www.iana.org/domains/example</a></p>
+<p>Have fun clicking!</p>
+<h2>Section One</h2>
+<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+<p><img alt="Random Unsplash Image" class="image-process-article-image" src="https://images.unsplash.com/derivatives/article-image/photo-1753204392401-a424cb95d3e2"/></p>
+<h2>Section Two</h2>
+<p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
+<blockquote>
+<p><span class="dquo">“</span>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born…”</p>
+</blockquote>
+<h3>Bullet Points</h3>
+<ul>
+<li>Foo</li>
+<li>Bar</li>
+<li>Baz</li>
+</ul>
+<p>Mathematical identity:</p>
+<div class="math">$$ 0 = 1 - 1 $$</div>
+<h2>Links <span class="amp">&amp;</span> Images</h2>
+<ul>
+<li>Inline link: <a href="https://getpelican.com">Pelican</a></li>
+<li>Image: <img alt="Alt text" src="https://placekitten.com/200/300"/></li>
+</ul>
+<h2>Lists</h2>
+<ol>
+<li>First</li>
+<li>Second</li>
+<li>Sub-item A</li>
+<li>Sub-item B</li>
+</ol>
+<h2>Tables</h2>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Header</td>
+<td>Title</td>
+</tr>
+<tr>
+<td>Cell</td>
+<td>Cell</td>
+</tr>
+</tbody>
+</table>
+<h2>Code</h2>
+<pre><code class="language-javascript">const greet = () =&gt; console.log('Hello');
+</code></pre>
+<h2>Math</h2>
+<p>Inline: <span class="math">\(a^2 + b^2 = c^2\)</span></p>
+<p>Block:</p>
+<div class="math">$$ \int_{0}^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2} $$</div>
+<h1>My super blog post</h1>
+<p>Download dataset here: <a href="https://zhukpm.github.io/posts/1990/df.pdf">df.pdf</a></p>
+<p>How to setup a virtual environment using <code>venv</code> for Python projects? Easy! Just follow the steps below.</p>
+<h2>Setting up a virtual environment using <code>venv</code></h2>
+<ol>
+<li>Open your terminal.</li>
+<li>Navigate to your project directory.</li>
+<li>Run the command: <code>python3 -m venv venv</code></li>
+<li>Activate the virtual environment:</li>
+<li>On macOS/Linux: <code>source venv/bin/activate</code></li>
+<li>On Windows: <code>venv\Scripts\activate</code></li>
+<li>On Windows PowerShell: <code>venv\Scripts\Activate.ps1</code></li>
+<li>Your terminal prompt should now show the name of the virtual environment, indicating that it is active.</li>
+</ol>
+<h2>Here are some additional tips</h2>
+<ul>
+<li>To install packages, use <code>pip install package_name</code>.</li>
+<li>To deactivate the virtual environment, simply run the command: <code>deactivate</code>. </li>
+<li>To remove the virtual environment, delete the <code>venv</code> directory. </li>
+<li>To ensure your virtual environment is not included in version control, add <code>venv/</code> to your <code>.gitignore</code> file. </li>
+<li>To recreate the virtual environment later, you can run the same <code>python3 -m venv venv</code> command again in your project directory. </li>
+<li>To check if the virtual environment is active, you can run <code>which python</code> (macOS/Linux) or <code>where python</code> (Windows) to see the path of the Python interpreter being used. It should point to the <code>venv</code> directory.</li>
+</ul>
+<h1><span class="caps">SSH</span> Hardening Best Practices</h1>
+<p>Edit <code>/etc/ssh/sshd_config</code>:</p>
+<pre><code class="language-conf">PermitRootLogin no
+PasswordAuthentication no
+KexAlgorithms curve25519-sha256@libssh.org
+Ciphers chacha20-poly1305@openssh.com
+</code></pre>
+<p>Restart the service:</p>
+<pre><code class="language-bash">sudo systemctl restart sshd
+</code></pre>
+<h2>Resources</h2>
+<ul>
+<li><a href="https://www.gnu.org/software/bash/manual/bash.html#Arrays">https://www.gnu.org/software/bash/manual/bash.html#Arrays</a></li>
+</ul>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://zhukpm.github.io/posts/category/natural-language-processing">Natural Language Processing</a> on
+    <time class="published" datetime="1990-02-20T14:25:00+01:00">        20th
+February 1990
+    </time>
+</footer>
+<section class="tags">
+<a href="https://zhukpm.github.io/posts/tag/arrays">arrays</a>
+<a href="https://zhukpm.github.io/posts/tag/bash">bash</a>
+<a href="https://zhukpm.github.io/posts/tag/scripting">scripting</a>
+<a href="https://zhukpm.github.io/posts/tag/test">test</a>
+<a href="https://zhukpm.github.io/posts/tag/test-page">test page</a>
+<a href="https://zhukpm.github.io/posts/tag/unlisted">unlisted</a>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://zhukpm.github.io/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://zhukpm.github.io/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://zhukpm.github.io/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://zhukpm.github.io/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p>This website does not use cookies. Server logs contain IP address and user agent info. Using this site means you agree to it. You can read more about it <a href="https://www.google.com/search?q=gdpr" rel="noopener noreferrer" target="_blank">here</a>.</p>
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
