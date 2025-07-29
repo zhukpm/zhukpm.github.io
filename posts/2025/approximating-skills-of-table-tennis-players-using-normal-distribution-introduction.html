@@ -62,6 +62,9 @@ if ('serviceWorker' in navigator) {
 <li class="active">
 <a href="https://zhukpm.github.io/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
 </li>
+<li>
+<a href="https://zhukpm.github.io/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
 </ol>
 <p>The idea struck me during a friendly table tennis tournament. We had a marathon of matches to rank ourselves by skill,
 and somewhere in the middle of all those games, a question popped into my mind: How can we estimate players’ skill levels <span class="math">\(\mathcal{S}\)</span> using just the game outcomes <span class="math">\(\mathcal{D}\)</span>? Ideally, without needing to play <span class="math">\(O(n^2)\)</span> matches
@@ -87,7 +90,7 @@ This way, we can rank players by the means of their distributions, effectively s
 <li>During each game, a player “shows” a skill level <span class="math">\(s_i\)</span>, which comes from a random variable <span class="math">\(S_i\)</span>. </li>
 <li>The exposed skills of the two players in a game are independent (though, this is an oversimplification). In reality, some players have “awkward” opponents due to style matchups, mental pressure, or who knows what else.</li>
 <li>The player with the higher exposed skill wins. Simple rule: if <span class="math">\(s_i &gt; s_j\)</span>, then player <span class="math">\(i\)</span> beats player <span class="math">\(j\)</span>.</li>
-<li>Player skill distributions are modeled as normal distributions with specific parameters for each player: <span class="math">\(S_i \sim \mathcal{N}(\mu_i,\,\sigma_i)\,\)</span>.</li>
+<li>Player skill distributions are modeled as normal distributions with specific parameters for each player: <span class="math">\(S_i \sim \mathcal{N}(\mu_i,\,\sigma_i^2)\,\)</span>.</li>
 <li>Using this model, we can calculate the probability of player <span class="math">\(i\)</span> beating player <span class="math">\(j\)</span> as <span class="math">\({P(S_i &gt; S_j)}\)</span>.</li>
 </ol>
 <p>Before diving into the math and the Python code, here are a few disclaimers.</p>
@@ -173,6 +176,12 @@ May 2025
 <a href="https://zhukpm.github.io/posts/tag/player-ranking">Player Ranking</a>
 <a href="https://zhukpm.github.io/posts/tag/table-tennis">Table Tennis</a>
 </section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://zhukpm.github.io/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a></li>
+</ul>
+</section>
 </main>
 <aside id="sidebar">
 <div class="sidebar-block">
@@ -198,16 +207,19 @@ May 2025
 <h2>Categories</h2>
 <ul>
 <li>
-<a href="https://zhukpm.github.io/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+<a href="https://zhukpm.github.io/posts/category/math">Math (2)</a>
 </li>
 <li>
-<a href="https://zhukpm.github.io/posts/category/math">Math (1)</a>
+<a href="https://zhukpm.github.io/posts/category/natural-language-processing">Natural Language Processing (2)</a>
 </li>
 </ul>
 </div>
 <div class="sidebar-block">
 <h2>Recent posts</h2>
 <ul>
+<li>
+<a href="https://zhukpm.github.io/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
 <li>
 <a href="https://zhukpm.github.io/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
 </li>
