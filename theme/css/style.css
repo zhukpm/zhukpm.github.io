@@ -1,6 +1,6 @@
 body {
 	font: 1em "DIN Pro", "Fira Sans", sans-serif;
-	background-color: #fff;
+	background-color: #fafafa;
 	color: #161616;
 	text-align: left;
 	line-height: 1.5em;
@@ -183,7 +183,7 @@ figure {
 }
 
 pre[class*="language-"] {
-	background-color: #fff;
+	background-color: #fcfcfc;
 	border: 1px solid lightgray;
 	font-size: 1rem;
 }
