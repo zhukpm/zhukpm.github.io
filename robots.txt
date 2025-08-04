@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://zhukpm.github.io/sitemap.xml
+Sitemap: https://vzhukov.dev/sitemap.xml
