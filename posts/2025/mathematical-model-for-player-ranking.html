@@ -30,19 +30,6 @@
 <meta content="#1F3683" name="theme-color"/>
 <link href="https://vzhukov.dev/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
 <link href="https://vzhukov.dev/logo_rounded.png" rel="icon"/>
-<script>
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
-
-        </script>
 <link href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://vzhukov.dev"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://vzhukov.dev/posts"}, {"@type": "ListItem", "position": 3, "name": "2025", "item": "https://vzhukov.dev/posts/2025"}, {"@type": "ListItem", "position": 4, "name": "Mathematical model for player ranking", "item": "https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking.html"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "author": {"@type": "Person", "name": "Viacheslav Zhukov"}, "publisher": {"@type": "Organization", "name": "Viacheslav Zhukov", "logo": {"@type": "ImageObject", "url": "https://vzhukov.dev/logo_rounded.png"}}, "headline": "Mathematical Model for Player&nbsp;Ranking", "about": "Math", "datePublished": "2025-06-12 14:00"}</script></head>
 <body class="home" id="index">
 <header class="body" id="banner">
@@ -70,7 +57,8 @@ if ('serviceWorker' in navigator) {
 <a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
 </li>
 </ol>
-<p>In the previous post, we discussed how to model player skills using normal distributions. Now, let’s dive into the 
+<p>In the <a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">previous post</a>, 
+we discussed how to model player skills using normal distributions. Now, let’s dive into the 
 mathematical details of how we can estimate the parameters of these distributions using Maximum Likelihood Estimation.</p>
 <p><strong>Problem definition:</strong> Having a set of players <span class="math">\(\mathcal{P}\)</span> numbered from <span class="math">\(1\)</span> to <span class="math">\(n\)</span> and a set of game results 
 <span class="math">\(\mathcal{D}\)</span> assign skill levels to each player modeling it with normal distribution.</p>
@@ -247,7 +235,77 @@ between taking gradients with respect to <span class="math">\(\mu_{p^k_1}\)</sp
 \end{equation}</div>
 <p>Looks terrifying, but it’ll be much easier to read in the code (a lot of that is already implemented in the <code>numpy</code> library).</p>
 <h4>Partial derivative with respect to scales</h4>
-<p><em>This article is still a work in progress. Check it out later for the rest of the content.</em></p>
+<div class="math">\begin{equation}\label{eq:gradsig:all}
+    \begin{split}
+        &amp; \frac{\partial}{\partial \sigma_i} \log {\mathcal{L}\left(\,\theta \; | \; \mathcal{D} \,\right)} = \frac{\partial}{\partial \sigma_i} \sum_{k=1}^{m}{\log{\left(1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)\right)}} = \\
+        &amp; = \sum_{k=1}^{m}{\frac{\partial}{\partial \sigma_i} \log{\left(1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)\right)}} = \\
+        &amp; = \sum_{k=1}^{m}{\frac{1}{1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)} \cdot \frac{\partial}{\partial \sigma_i} {\left(1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)\right)}} = \\
+        &amp; = \sum_{k=1}^{m}{\frac{-1}{1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)} \cdot \frac{\partial}{\partial \sigma_i} \Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)} \\
+    \end{split}
+\end{equation}</div>
+<p>It’s pretty much the same as for <span class="math">\(\mu_i\)</span>. And the observations are even more favorable here:</p>
+<ul>
+<li>Just as before, if player <span class="math">\(p_i\)</span> doesn’t participate in game <span class="math">\(G^j\)</span>, then the gradient of this game’s likelihood with respect to <span class="math">\(\sigma_i\)</span> will also be <span class="math">\(0\)</span>.</li>
+<li>Moreover, <em>there is no difference</em> (in equation terms) between taking gradients with respect to <span class="math">\(\sigma_{p^k_1}\)</span> and <span class="math">\(\sigma_{p^k_2}\)</span>, since they both appear only in the denominator <span class="math">\(\sqrt{\sigma_{p^k_1}^2 + \sigma_{p^k_2}^2}\)</span>, and with the same sign and power.</li>
+</ul>
+<p>So we can consider only games where player <span class="math">\(p_i\)</span> participated, regardless of whether they won or lost:</p>
+<div class="math">\begin{equation}\label{eq:gradsigma:calculated}
+    \begin{split}
+        &amp; \sum_{k=1}^{m}{\frac{-1}{1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)} \cdot \frac{\partial}{\partial \sigma_i} \Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)} = \\
+        &amp; = \sum_{k \in G^i}{\frac{-1}{1-\Phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)} \cdot \frac{\partial}{\partial \sigma_i} \Phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)} = \\
+        &amp; = \sum_{k \in G^i}{
+        \frac{\mu_i-\mu_{p^k_2}}{1-\Phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)}
+        \cdot
+        \phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)
+        \cdot
+        \frac{\partial}{\partial \sigma_i}
+        \left(\frac{1}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)
+        } = \\
+        &amp; = \sum_{k \in G^i}{
+        \frac{\mu_i-\mu_{p^k_2}}{1-\Phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)}
+        \cdot
+        \phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)
+        \cdot
+        \left(-\frac{1}{2}\right)
+        \cdot
+        \frac{1}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}
+        \cdot
+        \frac{1}{\sigma_i^2+\sigma_{p^k_2}^2}
+        \cdot
+        2\sigma_i
+        } = \\
+        &amp; = \sum_{k \in G^i}{
+        \frac{\phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)}{1-\Phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)}
+        \cdot
+        \left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)
+        \cdot
+        \frac{\sigma_i}{\sigma_i^2+\sigma_{p^k_2}^2}
+        }
+    \end{split}
+\end{equation}</div>
+<p>Interesting observation here: If player <span class="math">\(p_i\)</span> won against <span class="math">\(p_j\)</span>, and <span class="math">\(\mu_i &gt; \mu_j\)</span>, then their gradient with respect to <span class="math">\(\sigma_i\)</span> will be <em>negative</em> – meaning that optimally we’re reinforcing this difference; if it’s the other way 
+around (e.g., <span class="math">\(p_i\)</span> lost to <span class="math">\(p_j\)</span>, but <span class="math">\(\mu_i &gt; \mu_j\)</span>), then the gradient with respect to <span class="math">\(\sigma_i\)</span> will be positive, 
+meaning that “we found an unexpected case, and want to account for it by broadening the possible skills of player <span class="math">\(p_i\)</span>”.</p>
+<p>Another interesting thing is that there are many multipliers appearing repeatedly in these equations, and it makes the 
+whole implementation much easier from a programming perspective.</p>
+<h3>Optimization algorithm</h3>
+<p>It was already described above, but let’s recap it in a more formal manner:</p>
+<ol>
+<li>Given a set of players <span class="math">\(\mathcal{P}\)</span>, games dataset <span class="math">\(\mathcal{D}\)</span>, <a href="https://en.wikipedia.org/wiki/Learning_rate">learning rate</a> <span class="math">\(\alpha\)</span>, maximum number of optimization steps <span class="math">\(\text{max_iterations}\)</span>:</li>
+<li><span class="math">\(\theta := \theta_0\)</span> (arbitrary, or random)</li>
+<li><span class="math">\(\text{iteration} = 1\)</span></li>
+<li>while <span class="math">\(\text{iteration} \leq \text{max_iterations}\)</span> (or while the magnitude of change is greater than a certain threshold):<ul>
+<li>Calculate gradients, <span class="math">\(\nabla \log \mathcal{L}\left(\,\theta \; | \; \mathcal{D} \,\right)\)</span></li>
+<li>Log gradient magnitude, <span class="math">\(||\nabla \log \mathcal{L}\left(\,\theta \; | \; \mathcal{D} \,\right)||\)</span> at the current step</li>
+<li>Update parameters <span class="math">\(\theta = \theta\;+\;\alpha\,\cdot\,\nabla \log \mathcal{L}\left(\,\theta \; | \; \mathcal{D} \,\right)\)</span> (we’re using “gradient ascent” since we’re interested in maximizing the likelihood)</li>
+<li>Log log-likelihood, <span class="math">\(\log\mathcal{L}\left(\,\theta \; | \; \mathcal{D} \,\right)\)</span></li>
+<li><span class="math">\(\text{iteration} \;\;+=\;\;1\)</span></li>
+</ul>
+</li>
+</ol>
+<p><span class="dquo">“</span>Logging” steps are a good way to see what’s happening in our training process – we’ll plot charts showing how 
+likelihood and gradient magnitude evolve over iterations.</p>
+<p>In the next post, we will implement this algorithm in Python, and see how it works in practice.</p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
         indent = "0em",
