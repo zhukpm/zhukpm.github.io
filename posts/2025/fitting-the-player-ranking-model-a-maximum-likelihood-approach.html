@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Fitting the Player Ranking Model: A Maximum Likelihood Approach – Viacheslav Zhukov</title>
+<meta charset="utf-8"/>
+<meta content="table tennis, skill approximation, normal distribution, player ranking, game outcomes, maximum likelihood estimation, gradient descent, machine learning, python" name="keywords"/>
+<meta content="https://vzhukov.dev/og-image.png" property="og:image"/>
+<meta content="In the previous post, we built all the necessary mathematics to model player skills as normal distributions. Here we will use all the formulas to implement the optimization algorithm in Python and fit the model to the data (both synthetic and real)." name="description"/>
+<meta content="Gradient Descent" name="tags"/>
+<meta content="Machine Learning" name="tags"/>
+<meta content="Maximum Likelihood Estimation" name="tags"/>
+<meta content="Normal Distribution" name="tags"/>
+<meta content="Player Ranking" name="tags"/>
+<meta content="Python" name="tags"/>
+<meta content="Table Tennis" name="tags"/>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="icon"/>
+<link href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://vzhukov.dev"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://vzhukov.dev/posts"}, {"@type": "ListItem", "position": 3, "name": "2025", "item": "https://vzhukov.dev/posts/2025"}, {"@type": "ListItem", "position": 4, "name": "Fitting the player ranking model a maximum likelihood approach", "item": "https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach.html"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "author": {"@type": "Person", "name": "Viacheslav Zhukov"}, "publisher": {"@type": "Organization", "name": "Viacheslav Zhukov", "logo": {"@type": "ImageObject", "url": "https://vzhukov.dev/logo_rounded.png"}}, "headline": "Fitting the Player Ranking Model: A Maximum Likelihood&nbsp;Approach", "about": "Machine Learning", "datePublished": "2025-08-12 13:00"}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<h1><a href="https://vzhukov.dev/">Viacheslav Zhukov</a></h1>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://vzhukov.dev/javascript-memes">Javascript Memes</a></li>
+<li><a href="https://vzhukov.dev/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach" rel="bookmark" title="Permalink to Fitting the Player Ranking Model: A Maximum Likelihood Approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</h1>
+</header>
+<section class="entry-content key-text-content">
+<p>This post is part 3 of the "Approximating Skills of Table Tennis Players Using Normal Distribution" series:</p>
+<ol id="series_parts">
+<li>
+<a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
+<li class="active">
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</li>
+</ol>
+<p>In the <a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">previous post</a>, we built all the necessary 
+mathematics to model player skills as normal distributions. Here we will use all the formulas to implement the 
+optimization algorithm in Python and fit the model to the data (both synthetic and real).</p>
+<h2>General setup</h2>
+<p>We will code everything from scratch - this will help us understand the mathematics better and give us more 
+flexibility and fine-grained control over the model. </p>
+<p>As for libraries, we will use only <code>numpy</code> and <code>scipy</code> for numerical computations and access to the <code>norm</code> 
+distribution. And, of course, <code>matplotlib</code> for plotting.</p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import norm
+</code></pre>
+<h2>Optimization algorithm</h2>
+<p>The algorithm will be an exact copy of what we derived in the previous post. We will start with the optimization 
+function itself, and then implement all the necessary helper functions. We will initialize means and scales (<span class="math">\(\theta\)</span>) 
+with zeros for means and ones for scales, and then use gradient ascent to optimize them.</p>
+<pre><code class="language-python">def optimize(
+        n_players: int,
+        dataset: np.ndarray,
+        alpha: float = 1e-4,
+        epochs: int = 1000,
+        logger: Logger | None = None,
+) -&gt; np.ndarray:
+    # setting theta to an arbitrary value - mean 0 and scale 1 for each player
+    theta = np.full((n_players, 2), [0.0, 1.0])
+
+    iteration = 1
+    while iteration &lt;= epochs:
+        # calculating gradients of log likelihood
+        grads = grad_log_likelihood(theta, dataset)
+
+        # updating theta
+        theta += alpha * grads
+
+        # calculating likelihood
+        likelihood = log_likelihood(theta, dataset)
+
+        # log iteration values
+        if logger:
+            logger.log('log_likelihood', likelihood.mean(), iteration)
+            logger.log('grad_norm', np.linalg.norm(grads), iteration)
+
+        # incrementing iteration
+        iteration += 1
+    return theta
+</code></pre>
+<div class="caption">
+<p>The primary <code>optimize</code> function that performs all the training using gradient ascent.</p>
+</div>
+<p>What’s happening here:</p>
+<ul>
+<li><code>n_players</code>: number of players participating in the tournament; we can’t rely on the dataset to tell us this, 
+    as it may contain only a subset of players. We won’t be able to calculate the means and scales for these “missing”
+    players, obviously, but we will still need to initialize them.</li>
+<li><code>dataset</code>: a 2D array of shape <code>(n_games, 2)</code> containing game outcomes, where each row is a game with two players - 
+    the first player won, and the second lost.</li>
+<li><code>alpha</code>: learning rate for the gradient ascent; we will use a small value to ensure smooth convergence.</li>
+<li><code>epochs</code>: number of iterations to run the optimization; we will stop when we reach this number.</li>
+<li><code>logger</code>: it’s really useful to log the optimization process; we will use it to track the progress and visualize the 
+    results. Everybody loves a good smooth plot.</li>
+<li><code>theta</code>: a 2D array of shape <code>(n_players, 2)</code> containing means and scales for each player; we will optimize these 
+    values during the training process. We initialize it with zeros for means and ones for scales.</li>
+<li><code>grads</code>: gradients of the log likelihood function. </li>
+<li><code>likelihood</code>: value of the log likelihood function for the current iteration - we’ll plot it later to see how the 
+    optimization process goes.</li>
+</ul>
+<p>Not rocket science, actually. Let’s start with the <code>log_likelihood</code> function - it’s a bit easier than the gradient one. 
+However, we’ll still need a couple more helper functions to calculate the probabilities of winning and losing, 
+specifically, the <span class="caps">CDF</span> and <span class="caps">PDF</span> of the standard normal distribution. Fortunately, <code>scipy.stats.norm</code> has it all.</p>
+<pre><code class="language-python">def norm_diff_argument(theta: np.ndarray, dataset: np.ndarray) -&gt; np.ndarray:
+    # returns - (mu1 - mu2) / sqrt(sigma1^2 + sigma2^2) for each game in the dataset
+    means = theta[:, 0]
+    scales = theta[:, 1]
+    winners = dataset[:, 0]
+    losers = dataset[:, 1]
+    return -(means[winners] - means[losers]) / np.sqrt(scales[winners] ** 2 + scales[losers] ** 2)
+
+
+def Phi(x: np.ndarray) -&gt; np.ndarray:
+    # returns the Cumulative Distribution Function of the standard normal distribution at the given point
+    return norm.cdf(x, loc=0, scale=1)
+
+
+def phi(x: np.ndarray) -&gt; np.ndarray:
+    # returns the Probability Density Function of the standard normal distribution at the given point
+    return norm.pdf(x, loc=0, scale=1)
+</code></pre>
+<p>Now, from the <a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">mathematical model</a>, we know how to 
+calculate the log likelihood of the dataset given the parameters:</p>
+<div class="math">\begin{equation}
+    \begin{split}
+        &amp; \log{\mathcal{L}\left(\,\theta \; ; \; \mathcal{D} \,\right)} =
+        \sum_{i=1}^{m}{\log{\left(1-\Phi\left(-\frac{\mu_{\theta,\, p_1^i}-\mu_{\theta,\,p_2^i}}{\sqrt{\sigma_{\theta,\,p_1^i}^2+\sigma_{\theta,\,p_2^i}^2}}\right)\right)}}
+    \end{split}
+\end{equation}</div>
+<p>We will return not a sum, but all the values in a 1D array. </p>
+<pre><code class="language-python">def log_likelihood(theta: np.ndarray, dataset: np.ndarray) -&gt; np.ndarray:
+    x = norm_diff_argument(theta, dataset)
+    return np.log(1 - Phi(x))
+</code></pre>
+<div class="caption">
+<p>The <code>log_likelihood</code> function that calculates the log likelihood of the games dataset given the parameters <span class="math">\(\theta\)</span>.</p>
+</div>
+<p>Okay, now to the most interesting part - the gradient of the log likelihood function. We will leverage numpy 
+vectorization to perform the calculations efficiently - without any loops. It’s a bit tricky and requires some 
+“thinking”, but it’s much easier to read the code, and it’ll also be much more concise and faster than the naive implementation.</p>
+<p>Besides, as we see in the gradient formula, there are a couple of things that we can precompute for both means and 
+scales gradients. First, we will precompute the common term </p>
+<div class="math">$$ \frac{\phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)}{1-\Phi\left(-\frac{\mu_i-\mu_{p^k_2}}{\sqrt {\sigma_i^2+\sigma_{p^k_2}^2}}\right)} $$</div>
+<p>Second, to calculate the gradients for each player, we will need to find all the games where the player either won or 
+lost. We will mark games with <code>0</code> if the player didn’t participate, <code>1</code> if the player won, and <code>-1</code> if the player lost.</p>
+<pre><code class="language-python">
+def grad_log_likelihood(theta: np.ndarray, dataset: np.ndarray) -&gt; np.ndarray:
+    players = np.arange(theta.shape[0]).reshape(-1, 1)
+    scales = theta[:, 1]
+    winners = dataset[:, 0]
+    losers = dataset[:, 1]
+
+    x = norm_diff_argument(theta, dataset)
+
+    # common multipliers for both gradients
+    phi_by_one_minus_Phi = phi(x) / (1 - Phi(x))
+
+    # -1/0/1 matrix indicating which player is winner/none/loser in each game
+    players_x_games = (players == winners).astype(int) - (players == losers).astype(int)
+
+    # calculating gradients for means
+    means_grad = players_x_games @ (phi_by_one_minus_Phi / np.sqrt(scales[winners] ** 2 + scales[losers] ** 2))
+
+    # calculating gradients for scales
+    scales_grad = np.abs(players_x_games) @ (phi_by_one_minus_Phi * x / (scales[winners] ** 2 + scales[losers] ** 2)) * scales
+
+    # returning gradients as a concatenated array in the form of theta
+    return np.vstack([means_grad, scales_grad]).transpose()
+</code></pre>
+<div class="caption">
+<p>The <code>grad_log_likelihood</code> function that calculates the gradient of the log likelihood function for the games dataset.</p>
+</div>
+<p>That’s pretty much it, and we’re ready to test our implementation!</p>
+<h2>Testing the implementation</h2>
+<p>We will start with a synthetic dataset - a sanity check to ensure that all the mathematics and implementation are 
+correct. We will attribute the players with random means and scales, and then generate a random dataset with game 
+outcomes based on these parameters. So ideally we should be able to recover the original means and scales from the 
+dataset (or at least end up with values that will produce the same probabilities of winning and losing for player pairs).</p>
+<p>I’ll also include here a couple of utility functions to generate the dataset, plot the results, print metrics, as well 
+as the main function to run the optimization.</p>
+<pre><code class="language-python">class Logger:
+    def __init__(self):
+        self._metrics = {}
+
+    def log(self, metric: str, value: float, iteration: int):
+        if metric not in self._metrics:
+            self._metrics[metric] = {}
+        self._metrics[metric][iteration] = value
+
+
+def plot(
+        *args,
+        diagram = plt.plot,
+        label: str = None,
+        xlabel: str = None,
+        ylabel: str = None,
+        title: str = None,
+        **kwargs
+):
+    plt.figure(figsize=(10, 5))
+    diagram(*args, label=label, **kwargs)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend()
+    plt.savefig(label.replace(' ', '_').lower() + '.png')
+
+
+def print_metrics(theta: np.ndarray, optimized_theta: np.ndarray):
+    print(f'Initial means: {theta[:, 0]}')
+    print(f'Optimized means: {optimized_theta[:, 0]}')
+    print(f'Initial scales: {theta[:, 1]}')
+    print(f'Optimized scales: {optimized_theta[:, 1]}')
+
+    p_diff = []
+    for p1 in range(theta.shape[0] - 1):
+        for p2 in range(p1 + 1, theta.shape[0]):
+            p_real = 1 - Phi(-(theta[p1, 0] - theta[p2, 0]) / np.sqrt(theta[p1, 1] ** 2 + theta[p2, 1] ** 2))
+            p_optimized = 1 - Phi(-(optimized_theta[p1, 0] - optimized_theta[p2, 0]) / np.sqrt(optimized_theta[p1, 1] ** 2 + optimized_theta[p2, 1] ** 2))
+            p_diff.append(p_real - p_optimized)
+
+    print(f'Mean difference in probabilities: {np.mean(np.abs(p_diff)):.4f}')
+    print(f'Median difference in probabilities: {np.median(np.abs(p_diff)):.4f}')
+
+    plot(
+        p_diff,
+        diagram=plt.hist,
+        bins=10,
+        alpha=0.7,
+        label='Probability Differences',
+        xlabel='Probability Difference',
+        ylabel='Value',
+        title='Distribution of Probability Differences'
+    )
+
+
+def generate_games(means: np.ndarray, scales: np.ndarray, n_games: int) -&gt; np.ndarray:
+    winners = []
+    losers = []
+    # creating an array of players indices
+    players = np.arange(means.size)
+    for i in range(n_games):
+        # taking 2 players at random
+        ps = np.random.choice(players, 2, False)
+        # generating skills for these players using normal distribution
+        skills = np.random.normal(loc=means[ps], scale=scales[ps])
+        # winner is the player with higher skill, loser is the one with lower skill
+        winners.append(ps[np.argmax(skills)])
+        losers.append(ps[np.argmin(skills)])
+    return np.vstack([winners, losers]).transpose()
+
+
+if __name__ == '__main__':
+    # Example usage
+    n_players = 10
+    n_games = 300
+
+    # Randomly generating means and scales for players
+    means = np.random.uniform(0, 5, n_players)
+    scales = np.random.uniform(0.5, 2, n_players)
+
+    # Generating games dataset
+    games_dataset = generate_games(means, scales, n_games)
+
+    # Initializing logger
+    logger = Logger()
+
+    # Optimizing player skills
+    optimized_theta = optimize(n_players, games_dataset, alpha=1e-4, epochs=5000, logger=logger)
+
+    # Printing results
+    print_metrics(np.vstack([means, scales]).transpose(), optimized_theta)
+
+    # plotting the results for visualization of logs - saving into a file
+    plot(
+        list(logger._metrics['log_likelihood'].keys()),
+        list(logger._metrics['log_likelihood'].values()),
+        label='Log Likelihood',
+        xlabel='Iteration',
+        ylabel='Value',
+        title='Log Likelihood Over Iterations'
+    )
+    plot(
+        list(logger._metrics['grad_norm'].keys()),
+        list(logger._metrics['grad_norm'].values()),
+        label='Gradient Norm',
+        xlabel='Iteration',
+        ylabel='Value',
+        title='Gradient Norm Over Iterations'
+    )
+</code></pre>
+<p><em>Note</em>: It is an interesting question how to measure the difference between two probability distributions, since we want 
+to compare the original and optimized distributions for each pair of players. There are many smart approaches 
+to do so, e.g. <a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence">Kullback-Leibler divergence</a>, 
+but I really prefer something simple, intuitive, and interpretable. So here I just calculate the absolute difference 
+between the probabilities of winning for each pair of players, and then take the mean and median of these differences. 
+Ideally, we should see that these differences are small, which means that the optimized parameters produce probabilities 
+of winning and losing that are close to the original ones. </p>
+<p>Cool! Now - the most interesting part - let’s see the results. Again, ideally we should see that:</p>
+<ol>
+<li>Log likelihood is increasing over iterations - it means that the model is <em>learning</em> and improving its fit to the data.</li>
+<li>Gradient norm is decreasing over iterations - it means that the model is <em>converging</em> to an optimal (or suboptimal) solution.</li>
+<li>The optimized means and scales produce probabilities of winning and losing that are close to the original ones - 
+   it means that the model is able to recover the original interconnections between players’ skills and game outcomes.</li>
+</ol>
+<p>Here is the output:</p>
+<pre><code class="language-text">Initial means: [3.84361067 3.83766923 2.67264325 4.11026263 0.6825908  1.50171865 2.20568889 0.53084076 0.40802729 1.36410144]
+Optimized means: [ 0.90024205  0.91925092  0.34922694  0.95610695 -0.66441085 -0.17676143 -0.1826733  -0.7631907  -1.10177428 -0.23601631]
+Initial scales: [0.6120189  0.88244972 1.9428094  1.2859601  1.37018517 1.52210234 1.26951214 1.80880291 1.90045287 1.60969589]
+Optimized scales: [0.87155517 0.5327172  0.3682235  0.5299672  0.819666   0.59379071 0.47543815 0.61261271 0.94202693 0.99237121]
+Mean difference in probabilities: 0.0618
+Median difference in probabilities: 0.0524
+</code></pre>
+<p>We can see that the optimized means and scales are quite different from the original ones, but the probabilities of 
+winning and losing for each pair of players are still close to the original ones. The mean difference is around <code>0.06</code>,
+which means that when predicting the outcome of a game between two players, the model will be off by about <code>6%</code> on 
+average. Looks nice, actually!</p>
+<p>What about the plots?</p>
+<p><img alt="Log likelihood over iterations" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/log_likelihood.png"/></p>
+<div class="caption">
+<p>Log Likelihood over iterations.</p>
+</div>
+<p><img alt="Gradient norm over iterations" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/gradient_norm.png"/></p>
+<div class="caption">
+<p>Gradient Norm over iterations.</p>
+</div>
+<p><img alt="Probability differences distribution" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/probability_differences.png"/></p>
+<div class="caption">
+<p>Distribution of Probability Differences.</p>
+</div>
+<p>They look like we actually trained something! All charts show exactly what we expected: the log likelihood is 
+increasing, the gradient norm is decreasing, and the probability differences are distributed around zero with small 
+variation. So it looks like we’re ready to move on to the real data. </p>
+<p>However, just out of curiosity, let’s compare log likelihoods for the original and optimized parameters.</p>
+<pre><code class="language-text">Log likelihood - initial   : -0.4194
+Log likelihood - optimized : -0.4403
+</code></pre>
+<p>They are roughly the same, which means that the model is able to fit the data well enough. We’re good to go!</p>
+<h2>Applying the model to real data</h2>
+<p>There were 11 participants in the tournament, and we had to play one against each other to determine the ranking (since 
+I started this project after the tournament). We played “until 2 wins” in a best-of-3 format, and the final table looks 
+like this:</p>
+<p><img alt="Table Tennis Tournament Results" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/tournament_results.png"/></p>
+<div class="caption">
+<p>The final table of the tournament.</p>
+</div>
+<p>Anyway, we have the data, and we can use it to fit our model. I’ll omit the data transformation part here, and run the 
+<code>optimize</code> function to see what we get. Let’s start with the plots:</p>
+<p><img alt="Log likelihood over iterations for real data" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/real_log_likelihood.png"/></p>
+<div class="caption">
+<p>Log Likelihood over iterations for real data.</p>
+</div>
+<p><img alt="Gradient norm over iterations for real data" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/real_gradient_norm.png"/></p>
+<div class="caption">
+<p>Gradient Norm over iterations for real data.</p>
+</div>
+<p>The same picture as before: the log likelihood is increasing, the gradient norm is decreasing; looks like it converged. 
+But now, contrary to the synthetic data, we don’t have the “original” means and scales to compare with. So let’s compare 
+the optimized means and scales with some basic statistics of the players’ performance like the number of wins/losses 
+(side note: some players played more games than others due to “finals” and absences).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Player</th>
+<th style="text-align: right;"># wins</th>
+<th style="text-align: right;"># losses</th>
+<th style="text-align: right;">Skill mean</th>
+<th style="text-align: right;">Skill variance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.77</td>
+<td style="text-align: right;">0.55</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">-0.66</td>
+<td style="text-align: right;">0.42</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">0.31</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">-1.52</td>
+<td style="text-align: right;">0.33</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-0.03</td>
+<td style="text-align: right;">0.45</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">0.19</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">1.17</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">0.55</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">-1.18</td>
+<td style="text-align: right;">0.45</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">0.32</td>
+</tr>
+</tbody>
+</table>
+<p>Looks somewhat close to what we expected - the players with more wins have higher means. The scales are a bit more 
+tricky, but they also seem to reflect the players’ performance - those with an almost equal number of wins and losses 
+have higher scales, while those with a clear advantage have lower scales.</p>
+<p>Back then we also calculated the final ranking manually, based on the number of wins and losses. Let’s compare it with 
+the ranking based on the optimized means. A couple of notes here: first, we had “finals” among the top three players at 
+the end, and second, player #1 didn’t participate in the finals due to an injury, so we had to adjust the final ranking.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Player</th>
+<th style="text-align: right;">Manual ranking before finals</th>
+<th style="text-align: right;">Manual ranking after finals</th>
+<th style="text-align: right;">Skill ranking</th>
+<th style="text-align: right;">Skill mean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.77</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">-0.66</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.98</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">-1.52</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">-0.03</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.24</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.12</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">-1.18</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.29</td>
+</tr>
+</tbody>
+</table>
+<p>The ranking based on the optimized means is really close to the manual ranking! Which means that we could have used this 
+model to determine the ranking without manual calculations (if only I had this model before the tournament). </p>
+<p>However, the most useful part of this model is that it allows us to predict the outcome of future games between players. 
+Here’s the table with the probabilities of winning for each player against each other player (the probability that the 
+player on the left will win against the player on the top):</p>
+<p><img alt="Winning probabilities" class="image-process-article-image" src="https://vzhukov.dev/images/006/derivatives/article-image/real_probs.png"/></p>
+<div class="caption">
+<p>Winning probabilities for each player against each other.</p>
+</div>
+<h2>Conclusion</h2>
+<p>This whole exercise was done just out of curiosity and for fun! But I also wanted to show how mathematics and 
+programming can be used to solve real-world problems, and I hope you enjoyed it. Maybe it will even encourage you to 
+try something similar on your own.</p>
+<p>Full code is available on <a href="https://github.com/zhukpm/openapps/tree/main/table_tennis_player_ranking">GitHub</a>.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning</a> on
+    <time class="published" datetime="2025-08-12T13:00:00+02:00">        12th
+August 2025
+    </time>
+</footer>
+<section class="tags">
+<a href="https://vzhukov.dev/posts/tag/gradient-descent">Gradient Descent</a>
+<a href="https://vzhukov.dev/posts/tag/machine-learning">Machine Learning</a>
+<a href="https://vzhukov.dev/posts/tag/maximum-likelihood-estimation">Maximum Likelihood Estimation</a>
+<a href="https://vzhukov.dev/posts/tag/normal-distribution">Normal Distribution</a>
+<a href="https://vzhukov.dev/posts/tag/player-ranking">Player Ranking</a>
+<a href="https://vzhukov.dev/posts/tag/python">Python</a>
+<a href="https://vzhukov.dev/posts/tag/table-tennis">Table Tennis</a>
+</section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a></li>
+<li><a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a></li>
+</ul>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://vzhukov.dev/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Privacy</h2>
+<p>
+                        This site uses Google Analytics to understand visitor traffic and improve content.
+                        It collects anonymous data like country, language, and pages visited - no personal
+                        information. By continuing to browse, you agree to this minimal tracking.
+                        <a href="https://www.google.com/search?q=is+google+analytics+tracking+safe" rel="noopener noreferrer" target="_blank">Read more</a>.</p>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/category/math">Math (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning (1)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/software-engineering">Software Engineering (1)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/what-i-have-learned-during-my-1275-day-streak-on-leetcode">What I have learned during my 1275+ day streak on LeetCode</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.js,npm/prismjs@1.30.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+</html>
