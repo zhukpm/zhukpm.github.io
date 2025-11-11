@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Essential tools for Machine Learning Engineers: my real-world stack – Viacheslav Zhukov</title>
+<meta charset="utf-8"/>
+<meta content="Viacheslav Zhukov" property="og:site_name"/>
+<meta content="machine learning engineering, ML tools, python development, uv package manager, ruff linter, pyright, mypy, docker, kubernetes, mlflow, github copilot, devpods, jupyter notebooks, scikit-learn, pre-commit hooks, AI coding assistants, ML workflow, production ML systems, NLP engineering, data science tools, ML infrastructure" name="keywords"/>
+<meta content="article" property="og:type"/>
+<meta content="Essential tools for Machine Learning Engineers: my real-world stack - Viacheslav Zhukov" property="og:title"/>
+<meta content="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack" property="og:url"/>
+<meta content="2025-11-11T10:40:00+01:00" property="article:published_time"/>
+<meta content="Viacheslav Zhukov" property="article:author"/>
+<meta content="Software Engineering" property="article:section"/>
+<meta content="A comprehensive guide to the tools I actually use as a Machine Learning Engineer working on NLP projects. From essential development tools like PyCharm and uv, to deployment solutions like Docker and Kubernetes, to AI-powered coding assistants - this article covers the real-world toolkit that helps me ship production ML systems efficiently. Plus, honest takes on popular tools I don’t use and why." name="description"/>
+<meta content="A comprehensive guide to the tools I actually use as a Machine Learning Engineer working on NLP projects. From essential development tools like PyCharm and uv, to deployment solutions like Docker and Kubernetes, to AI-powered coding assistants - this article covers the real-world toolkit that helps me ship production ML systems efficiently. Plus, honest takes on popular tools I don’t use and why." property="og:description"/>
+<meta content="Data Science" name="tags"/>
+<meta content="Data Science" property="article:tag"/>
+<meta content="DevOps" name="tags"/>
+<meta content="DevOps" property="article:tag"/>
+<meta content="Machine Learning" name="tags"/>
+<meta content="Machine Learning" property="article:tag"/>
+<meta content="MLOps" name="tags"/>
+<meta content="MLOps" property="article:tag"/>
+<meta content="NLP" name="tags"/>
+<meta content="NLP" property="article:tag"/>
+<meta content="Python" name="tags"/>
+<meta content="Python" property="article:tag"/>
+<meta content="Tools" name="tags"/>
+<meta content="Tools" property="article:tag"/>
+<meta content="https://vzhukov.dev/images/007/crisp.png" property="og:image"/>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="icon"/>
+<link href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://vzhukov.dev"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://vzhukov.dev/posts"}, {"@type": "ListItem", "position": 3, "name": "2025", "item": "https://vzhukov.dev/posts/2025"}, {"@type": "ListItem", "position": 4, "name": "Essential tools for machine learning engineers my real world stack", "item": "https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack.html"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "author": {"@type": "Person", "name": "Viacheslav Zhukov"}, "publisher": {"@type": "Organization", "name": "Viacheslav Zhukov", "logo": {"@type": "ImageObject", "url": "https://vzhukov.dev/logo_rounded.png"}}, "headline": "Essential tools for Machine Learning Engineers: my real-world&nbsp;stack", "about": "Software Engineering", "datePublished": "2025-11-11 10:40"}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<h1><a href="https://vzhukov.dev/">Viacheslav Zhukov</a></h1>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://vzhukov.dev/javascript-memes">Javascript Memes</a></li>
+<li><a href="https://vzhukov.dev/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack" rel="bookmark" title="Permalink to Essential tools for Machine Learning Engineers: my real-world stack">Essential tools for Machine Learning Engineers: my real-world stack</a>
+</h1>
+</header>
+<section class="entry-content key-text-content">
+<p><img alt="Essential tools for Machine Learning Engineers: my real-world stack" class="image-process-crisp" src="https://vzhukov.dev/images/007/derivatives/crisp/1x/crisp.png" srcset="https://vzhukov.dev/images/007/derivatives/crisp/1x/crisp.png 1x, https://vzhukov.dev/images/007/derivatives/crisp/2x/crisp.png 2x, https://vzhukov.dev/images/007/derivatives/crisp/4x/crisp.png 4x"/></p>
+<div class="caption">
+<p>Credit goes to ChatGPT for the image, and to Claude for writing the prompt for ChatGPT</p>
+</div>
+<p>When people are breaking into the field of Data Science or Machine Learning, they usually learn as much <code>python</code>/<code>pandas</code>/<code>numpy</code>/<code>sklearn</code> 
+as they can. And that’s great - it’s a wonderful way to kickstart your journey, understand 
+that data is not always clean, that models don’t always work as expected, that there can be discrepancies between 
+different metrics, and so on. The further you dive into this rabbit hole, the more it becomes just a process - 
+scientific and engineering. You’re gathering requirements and data, analyzing them, devising models or other approaches, 
+implementing them, testing, deploying, monitoring, and so on. And you start using more and more tools to help you 
+streamline each of these steps and complete them faster and with less effort. Other aspects are piling up, like 
+versioning, code quality, testing, and so on (Bob writes unit tests - be like Bob).</p>
+<p>As a Machine Learning Engineer, I use many tools to streamline my workflow. Of course, the toolset generally depends on 
+the types of projects you’re working on. I, for instance, work mostly on <span class="caps">NLP</span> projects like text classification, data 
+generation, LLMs, <span class="caps">LLM</span>-based agents, and so on. I’m involved in data wrangling, production code writing, model training 
+(sometimes), deployment, monitoring, and so on. Nevertheless, I still use classics like <code>sklearn</code> when I need to 
+calculate metrics or train a logistic regression. An important note here is that Machine Learning Engineering isn’t only 
+about data science and machine learning - it’s also about software engineering with all its consequences.</p>
+<p>So I decided to compile and share a list of tools that I <em>really</em> use in my day-to-day work. I won’t include programming 
+languages or specific frameworks like <code>pytorch</code>, but rather focus on <em>tools</em> - additional things apart from text editors 
+that help me do my job faster and better. As a bonus, I’ll also include a list of tools that I <em>don’t</em> use (I like how 
+it’s arguable and may easily spark discussions, but it’s still true for me). I hope it’ll be useful for readers as well, 
+and maybe someone will even discover something new to try and play with. Beginners may find it a good list of technologies 
+to explore and learn.</p>
+<h2>Tools that I <span class="caps">DO</span> Use a Lot</h2>
+<h3>An <span class="caps">IDE</span> (Integrated Development Environment)</h3>
+<p>Okay, this one is a no-brainer. But it’s still better to mention it explicitly… Don’t get me wrong, writing code in 
+<code>nano</code> is awesome (and sometimes you just won’t have any other way to edit text files), but it’s not the most efficient 
+approach for your day-to-day work. I personally use PyCharm (the paid version, of course), but VSCode can also be a 
+great choice (I know good people who use it; it’s just me who doesn’t like it that much compared to PyCharm).</p>
+<p>However, I’d like to emphasize the importance of using an <span class="caps">IDE</span> especially for Data Scientists. These folks usually write 
+their code in Jupyter Notebooks, which they share later with engineers and others. Notebooks are really cool for 
+prototyping, verifying that certain things work, or doing one-time tasks. But they are <em>almost</em> unusable for production 
+code, and I can’t stress enough how messy and unmaintainable Notebook code usually is… What worked for us is having a 
+repository split into two parts: one for experiments (with Notebooks, one-time scripts, etc.), and another for reusable 
+components, libraries, and production code. Then you use an <span class="caps">IDE</span> to work with the production code, and Notebooks for 
+experiments/analysis only. Fortunately, modern IDEs have excellent support for Notebooks as well, so you can both write 
+production code and experiment in Notebooks within the same environment (until your <span class="caps">IDE</span> crashes with <span class="caps">OOM</span> or 100% <span class="caps">CPU</span> 
+load, but that’s another story).</p>
+<h3>uv</h3>
+<p><a href="https://github.com/astral-sh/uv">uv</a> is an “extremely fast Python package and project manager, written in Rust”. 
+Many people use <code>pip</code>, <code>pipenv</code>, <code>poetry</code> or Anaconda for managing Python packages and virtual environments, but since 
+I discovered <code>uv</code>, I haven’t looked back. It’s superfast, simple, and does exactly what I need. It creates virtual 
+environments just like <code>venv</code>, manages packages like <code>pip</code>, and has a simple <span class="caps">CLI</span>.</p>
+<p>Well, it’s better to see it in action once rather than read a lot of text, so here’s a quick example. Let’s create a 
+virtual environment for a new project, install some packages, and run a script. We’ll do it in two ways: with <code>uv</code> 
+and with <code>pip</code> + <code>venv</code>, and compare the time it takes.</p>
+<p>We’ll use a simple list of data science-related packages for this demo:</p>
+<pre><code class="language-text">numpy
+pandas
+scikit-learn
+scipy
+matplotlib
+seaborn
+jupyter
+plotly
+</code></pre>
+<p>First, let’s do it with <code>pip</code>:</p>
+<pre><code class="language-shell">time pip install -r requirements.txt
+</code></pre>
+<p>And the result:</p>
+<pre><code class="language-text">real    4m13.010s
+user    0m24.665s
+sys     0m12.064s
+</code></pre>
+<div class="caption">
+<p>Time taken to install packages with <code>pip</code> on my laptop</p>
+</div>
+<p>Now let’s do the same with <code>uv</code>. First, we’ll need to install <code>uv</code> itself (obviously), and create a <code>pyproject.toml</code> file like this one:</p>
+<pre><code class="language-toml">[project]
+name = "my_project"
+version = "0.1.0"
+description = "My description"
+requires-python = "&gt;=3.12"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy",
+    "matplotlib",
+    "seaborn",
+    "jupyter",
+    "plotly"
+]
+</code></pre>
+<p>Then we can run:</p>
+<pre><code class="language-shell">time uv sync
+</code></pre>
+<p>And the result:</p>
+<pre><code class="language-text">real    0m48.540s
+user    0m4.351s
+sys     0m7.376s
+</code></pre>
+<div class="caption">
+<p>Time taken to install packages with <code>uv</code> on my laptop</p>
+</div>
+<p>A dramatic difference that becomes even more significant when you have dozens of packages in your project and update 
+their versions quite often.</p>
+<p>Another cool feature of <code>uv</code> is that it automatically creates a <code>uv.lock</code> file, which essentially pins the versions of 
+all the packages you have installed. This is super useful for ensuring that your project works the same way on 
+different machines and environments, especially if you’re installing these dependencies later in a Docker container or 
+on a remote server.</p>
+<h3>ruff</h3>
+<p><a href="https://docs.astral.sh/ruff/">ruff</a> is an <em>extremely</em> fast Python linter and code formatter, written in Rust. It’s 
+really fast. I mean, really. Compared to other Python linters, of course. Why is that? Because it’s written in Rust. 
+You should get used to it - there are many cool tools appearing in Rust, and they are usually <em>much</em> faster than their 
+Python counterparts.</p>
+<p>Anyway, <code>ruff</code> is a linter and code formatter. It checks your code for various issues, like syntax errors, unused 
+imports, undefined names, quote style, and so on. Everything is configurable in the same <code>pyproject.toml</code> (but it’s 
+better to agree on some style guide with your team before committing a configuration to your team’s repository, 
+otherwise expect a lot of 🔥).</p>
+<p>In the end, it lets you write your code faster without thinking about proper spacing, quotes, line length, temporary 
+imports, etc. Everything will be checked and fixed automatically, so the resulting code is clean and follows styling guidelines.</p>
+<h3>pyright / mypy</h3>
+<p>Both of these are static type checkers for Python. What does this mean? It means that they analyze your code and check 
+if the types of variables, function arguments, and return values are consistent with the type hints you’ve provided. 
+To make it all work, you need to do two things:</p>
+<ol>
+<li>Add type hints to your code (yeah, that can be quite painful in Python, but let’s be honest, no <em>real</em> production 
+    code is written without type hints anymore)</li>
+<li>Run the type checker (either <a href="https://github.com/microsoft/pyright">pyright</a> or <a href="https://github.com/python/mypy">mypy</a>) 
+    on your codebase.</li>
+</ol>
+<p>Again, let’s see it in action:</p>
+<pre><code class="language-python">def add(x: float, y: float):
+    return x + y
+
+# you can't pass string as a float
+# (hopefully, you don't even want to do so)
+add(1, "")  # &lt;-- ERROR
+# Argument of type "Literal['']" cannot be assigned to parameter "y" of type "float" in function "add"
+#  "Literal['']" is not assignable to "float"  (reportArgumentType)
+
+
+# more complicated case with inheritance
+class Animal:
+    pass
+
+class Dog(Animal):
+    pass
+
+class Cat(Animal):
+    pass
+
+def add_pet(pets: list[Animal]) -&gt; None:
+    # no error, cause Cats are Animals
+    pets.append(Cat())
+
+my_dogs: list[Dog] = []
+add_pet(my_dogs)  # &lt;-- ERROR
+# Argument of type "list[Dog]" cannot be assigned to parameter "pets" of type "list[Animal]" in function "add_pet"
+#  "list[Dog]" is not assignable to "list[Animal]"
+#    Type parameter "_T@list" is invariant, but "Dog" is not the same as "Animal"
+#    Consider switching from "list" to "Sequence" which is covariant  (reportArgumentType)
+</code></pre>
+<p>I personally prefer <code>pyright</code> a bit more due to its speed. It’s also great that you can integrate it into your <span class="caps">IDE</span> and 
+use it instead of the built-in type checker.</p>
+<p>Finally, people usually use <code>mypy</code> or <code>pyright</code> in their <span class="caps">CI</span>/<span class="caps">CD</span> pipelines (e.g., GitHub Actions) to ensure that the code 
+being merged into the main branch is type-safe, and in pre-commit hooks to check the code before committing or pushing 
+it to the remote repository. However, it’s important to remember that these tools are not a silver bullet, and you still 
+need to write tests and do code reviews.</p>
+<h3>Git</h3>
+<p>This one is obvious. <a href="https://git-scm.com/">Git</a> is a version control system that helps you track changes in your 
+code and collaborate with others. There are even plenty of <span class="caps">GUI</span> clients and <span class="caps">IDE</span> integrations for Git, so you don’t have 
+to use the command line (however, being honest, sometimes it’s just faster or even inevitable, especially if you’re 
+doing something more complex than just committing and pushing changes).</p>
+<p>There are other alternatives to Git, but the idea is that you should use <em>some</em> version control. Code history really 
+helps sometimes. Especially if you’re building real production systems.</p>
+<p>If you decide to work with more complicated things like datasets, images, etc., you may find Git <span class="caps">LFS</span> quite useful. 
+However, there are other tools for dataset management as well.</p>
+<h3>pre-commit</h3>
+<p><a href="https://pre-commit.com/">pre-commit</a> is a framework for managing and maintaining multi-language pre-commit hooks 
+(just as written on their website). This means that you can use it to run various checks automatically before committing 
+your code. These checks can include running linters, formatters, type checkers (pyright or mypy, as described above), 
+or even security scanners (sec-team would give you a <code>+</code> on review for doing that).</p>
+<p>Its configuration looks roughly like this:</p>
+<pre><code class="language-yaml">repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+    -   id: black
+</code></pre>
+<div class="caption">
+<p>Example of pre-commit configuration file taken from <a href="https://pre-commit.com/#2-add-a-pre-commit-configuration">official documentation</a></p>
+</div>
+<p>Then after running <code>pre-commit install</code> in your repository, every time you try to commit something, the hooks will run 
+automatically. If any of them fail, you’ll get a nice message about what went wrong, and the commit will be aborted 
+(you have to fix the issues first, then try again).</p>
+<p>One caveat here is that if your repository is huge, then running a type checker or linter on the whole codebase may take 
+a while. Another problem I’ve faced is when you’re merging a branch with conflicting changes - it can be hard to resolve 
+them correctly so that the type checker/linter is satisfied. This may lead to some “breakages”, especially if you’re 
+using an <span class="caps">IDE</span> to do so (just as I do). And of course, you won’t be able to commit any “temporary code” until you fix all 
+the issues. I solved this problem by using not a <em>pre-“commit”</em>, but rather a <em>pre-“push”</em> hook, so that I can commit 
+any garbage I want, but it all looks good in my PRs on GitHub :) This works best if you’re squash-merging your PRs, so 
+that the commit history in the main branch is clean and tidy.</p>
+<pre><code class="language-yaml">default_stages: [push]
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.8
+    hooks:
+      - id: ruff
+        args: [--fix]
+        stages: [push]
+      - id: ruff-format
+        stages: [push]
+</code></pre>
+<div class="caption">
+<p>My pre-commit configuration file for pre-push hooks</p>
+</div>
+<h3>iTerm (Terminal)</h3>
+<p>Being familiar with the terminal is a must for any software engineer (even for <span class="caps">ML</span> Engineers, in my opinion). Navigating 
+the file system, running scripts, installing packages, managing Git repositories, making requests, connecting to remote 
+machines or clusters, running and managing Docker… This list is almost endless. For some of these tasks you can use a 
+<span class="caps">GUI</span>, but it’s usually much, much faster just to type a few commands and hit Enter.</p>
+<p>I won’t say that I’m a master of the terminal though. Fortunately, LLMs are getting better and better at writing shell 
+scripts. But you have to be able to <em>read</em> and <em>understand</em> what’s happening (and tweak it, of course).</p>
+<h3>IPython</h3>
+<p><a href="https://ipython.org/">IPython</a> is an interactive Python shell that has a lot of cool features compared to the standard 
+Python <span class="caps">REPL</span> (it’s worth noting that since <a href="https://docs.python.org/3.14/whatsnew/3.14.html#default-interactive-shell">Python 3.14</a>, 
+the default <span class="caps">REPL</span> has become much more powerful and user-friendly). It has syntax highlighting, autocompletion, magic 
+commands, and so on.</p>
+<p>IPython is super useful for quick experiments, data exploration, testing small snippets of code, and so on. It’s also 
+great for debugging, as you can run commands step by step and inspect variables.</p>
+<p>I have an IPython shell always open in PyCharm, so that I can quickly test some library code I just wrote, or check how 
+some function works, or even do some quick calculations or <span class="caps">HTTP</span> requests. Of course, any pandas/<span class="caps">JSON</span> wrangling is much 
+easier in an IPython shell (God, I probably would never remember the entire pandas <span class="caps">API</span>…).</p>
+<p><img alt="My IPython shell" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/ipython.png"/></p>
+<div class="caption">
+<p>A snippet of my IPython shell</p>
+</div>
+<h3>Docker and Docker Compose</h3>
+<p><a href="https://www.docker.com/">Docker</a> is essentially a tool that lets you package your entire application and all its 
+dependencies into a “container” that can run anywhere (well, depending on the platform you’ve built it for, but let’s 
+not go into details). It ensures that your application works the same way on your local machine, on a remote server, or 
+in the cloud - wherever you actually deploy and run it. It is currently the de facto standard for packaging and deploying 
+applications, and you should definitely try playing with it if you plan on building some real apps.</p>
+<p>I’ll be honest - it isn’t a very simple technology, and understanding all the peculiarities of its internal mechanisms 
+will take some time. It involves <span class="caps">OS</span>-level virtualization, file system layers, networking, and so on. But the <em>really good</em> 
+thing about Docker is that it takes almost all the complexity away from you, and you can just use it without knowing all 
+the internal details. What’s left for you is to learn basic concepts like images, containers, Dockerfiles, volumes, 
+networks, practice a bit in writing Dockerfiles and use them in your projects, and learn some <span class="caps">CLI</span> commands.</p>
+<p>All work with Docker starts with writing a <code>Dockerfile</code>, which is a text file that contains instructions on how to build 
+a Docker image for your application. It includes things like the base image to use (e.g., Python version, or an image 
+with pre-built <span class="caps">GPU</span> dependencies, or even another image of yours), the commands to run, the files to copy, the ports to 
+expose, and so on. The simplest <code>Dockerfile</code> for your application may look like this:</p>
+<pre><code class="language-dockerfile">FROM python:3.12-slim
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
+CMD ["python", "main.py"]
+</code></pre>
+<div class="caption">
+<p>A simple Dockerfile for a Python application installing dependencies from <code>requirements.txt</code> and running <code>main.py</code></p>
+</div>
+<p>Next steps involve:</p>
+<ol>
+<li>Building a Docker image from the <code>Dockerfile</code></li>
+<li><em>Optionally</em> pushing the image to a Docker registry (a place where all your images are stored)</li>
+<li>Running a container from the image or deploying it somewhere</li>
+</ol>
+<p><img alt="Docker workflow" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/docker.png"/></p>
+<div class="caption">
+<p>Docker workflow (a little messed up by ChatGPT)</p>
+</div>
+<p>Another cool thing about Docker is that there are many pre-built images for various applications, so you can just pull 
+them from Docker Hub (or your internal registry) and use them right away. You don’t have to set up a Redis server, or a 
+PostgreSQL database, or a Jupyter Notebook server - just pull the image and run it.</p>
+<p>Finally, if your application consists of multiple services (e.g., a web server, a database, a cache, etc.), or you just 
+don’t want to mess with <span class="caps">CLI</span> commands, you can use <a href="https://docs.docker.com/compose/">Docker Compose</a> to define and run 
+Docker applications. It allows you to specify all the building and running options in a readable, user-friendly <span class="caps">YAML</span> 
+configuration format (but again, being honest, I rarely use it since locally I mostly run them using <span class="caps">CLI</span> commands, and 
+for deployment I use other mechanisms).</p>
+<pre><code class="language-yaml">version: '3.8'
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+</code></pre>
+<div class="caption">
+<p>A simple Docker Compose configuration file for a Python application with a PostgreSQL database</p>
+</div>
+<p><em>Note</em>: Docker isn’t actually that free (well, the technology itself is, but the Docker Desktop application is not). 
+You can use Docker Engine on Linux for free, but if you’re on Windows or Mac, you’ll have to pay for Docker. And there 
+are alternatives like <a href="https://podman.io/">Podman</a> or <a href="https://rancherdesktop.io/">Rancher Desktop</a>, but I’d say that’s 
+a bit more complicated scenario.</p>
+<h3>Kubernetes</h3>
+<p><a href="https://kubernetes.io/">Kubernetes</a> (or K8s) is an open-source system for automating deployment, scaling, and 
+management of containerized applications (sounds complicated, right?). In simple terms, it’s a tool that helps you 
+manage and orchestrate multiple Docker containers across a cluster of machines (nodes, actual computers that do the 
+computing). It takes care of things like load balancing (sending requests to different instances of your service to 
+avoid overloading), scaling (creating new instances automatically if there’s a need), rolling updates (updating and 
+redeploying your applications when there’s a new version), and so on.</p>
+<p>This one is definitely not a tool for beginners, and you won’t need it until your application grows big enough to 
+require it. But if you’re working on a real production system, especially in the cloud, you’ll probably have to deal 
+with it. Fortunately, there are usually specialized people who handle it (DevOps engineers, SREs, etc.), but it’s still 
+essential to understand the basic concepts and how it works. I remember learning about it from several multi-hour videos 
+on YouTube, and then practicing a bit on my own cluster in the cloud. Again, unless you <strong>are</strong> a DevOps engineer, you 
+probably shouldn’t dive very deep into all the peculiarities. But knowing how it works and what happens after you’ve 
+finished training your <span class="caps">BERT</span> is definitely a must.</p>
+<h3>k9s</h3>
+<p><img alt="k9s screenshot" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/k9s.png"/></p>
+<div class="caption">
+<p>k9s screenshot from the <a href="https://k9scli.io/">official website</a></p>
+</div>
+<p><a href="https://k9scli.io/">k9s</a> is a terminal-based <span class="caps">UI</span> to interact with your Kubernetes clusters. It makes it much easier to 
+navigate, manage, and monitor your K8s resources without having to remember all the <span class="caps">CLI</span> commands. You can view your 
+deployed applications, pods, deployment scripts, workloads, read logs, and even attach to a running container and 
+perform operations there.</p>
+<p>All this is possible using standard K8s <span class="caps">CLI</span> commands, but <code>k9s</code> makes it much more user-friendly and efficient 
+(everybody loves interactive UIs, right?).</p>
+<h3>MLflow</h3>
+<p><a href="http://mlflow.org/">MLflow</a> is an open-source platform to manage the <span class="caps">ML</span> lifecycle, including experimentation, 
+reproducibility, deployment, and a central model registry.</p>
+<p>When you train a model or perform experiments, you usually want to keep track of various parameters, metrics, artifacts, 
+and so on. If you do this on a remote machine (e.g., a cloud <span class="caps">VM</span> with lots of GPUs), then it’s not that easy to access 
+these files later. It’s even more important if you’re working in a team and you want to share your results with others. 
+This means you need some kind of centralized place to store all this information, and MLflow provides exactly that.</p>
+<p>The workflow is quite simple: you set up an MLflow server (local or remote; there are even Docker containers for MLflow 
+as well), install the MLflow library in your Python environment, and use its <span class="caps">API</span> to log parameters, metrics, or even 
+files like charts and confusion matrices. The logging is performed using its Python <span class="caps">API</span> - you just call some functions, 
+and that’s it!</p>
+<pre><code class="language-python">import mlflow
+import mlflow.sklearn
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import train_test_split
+import pandas as pd
+# Set remote MLflow server URI
+mlflow.set_tracking_uri("http://your-mlflow-server:5000")
+# Start a new MLflow run
+with mlflow.start_run(run_name="example_run"):
+    # Log parameters
+    mlflow.log_param("n_estimators", 100)
+    mlflow.log_param("random_state", 42)
+    # Prepare data and train model
+    X, y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+    # Log metrics
+    score = model.score(X_test, y_test)
+    mlflow.log_metric("r2_score", score)
+    # Log model
+    mlflow.sklearn.log_model(model, "model")
+    # Log an artifact (e.g., a CSV file)
+    df = pd.DataFrame({"score": [score]})
+    df.to_csv("score.csv", index=False)
+    mlflow.log_artifact("score.csv")
+</code></pre>
+<div class="caption">
+<p>An example of logging data to MLflow server</p>
+</div>
+<p><em>Note</em>: MLflow isn’t the only tool for this job. There are other alternatives like Weights <span class="amp">&amp;</span> Biases, Neptune.ai, and so 
+on. Companies that make such solutions compete with each other, trying to make their products better (as large <span class="caps">AI</span>/<span class="caps">ML</span> 
+companies pay a lot of money to use them), so you can choose whatever you like. For me, it just happened that MLflow 
+was the first one I tried, and it works just fine for my needs.</p>
+<h3>Postman</h3>
+<p><a href="https://www.postman.com/">Postman</a> is an <span class="caps">API</span> client that makes it <em>much</em> easier to create, share, test, and document 
+APIs. If you’re working on a project that involves building or consuming APIs (and it usually does), Postman is a 
+must-have tool. Essentially, it’s a <span class="caps">GUI</span> for <code>curl</code> with extra features. But since everybody loves GUIs (we already know 
+that from previous sections), it’s a must-have.</p>
+<p>What I <em>really</em> like about Postman is that you can organize your <span class="caps">GET</span>/<span class="caps">POST</span>/<span class="caps">PUT</span>/<span class="caps">DELETE</span> requests into folders, fill in all 
+the necessary headers and body, use variables (yes, Postman does support variables for, e.g., base URLs or auth tokens), 
+and save everything for later. Next time you need to test your <span class="caps">API</span> - just open Postman, select the request you need, and 
+hit Send.</p>
+<p>I don’t really use the sharing feature for now, but even in single-player mode, Postman is super useful.</p>
+<p><img alt="Postman screenshot" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/postman.png"/></p>
+<div class="caption">
+<p>Postman screenshot from the <a href="https://www.postman.com/">official website</a></p>
+</div>
+<h3>Devpods</h3>
+<p>This is where things get really fascinating! Devpods (e.g., <a href="https://devpod.sh/">DevPod</a> by loft.sh) are reproducible 
+development environments running in remote VMs or Kubernetes clusters, usually configured using 
+<a href="https://containers.dev/implementors/json_reference/">devcontainers.json</a> files. You can think of them as lightweight, 
+cloud-based development environments that can be spun up quickly and easily, providing a consistent workspace regardless 
+of the local machine setup. You then connect to these remote environments using your terminal or an <span class="caps">IDE</span> (both PyCharm 
+and VSCode support remote development; however, being honest, I had to spend some time properly configuring the setup 
+in PyCharm) and work as if you were working locally. I mean, really, in PyCharm it looks and feels like you’re working 
+locally - it’s the same <span class="caps">IDE</span>, (almost) the same features and responsiveness, but all the code and dependencies are in the 
+remote environment, and everything runs there, on the remote machine.</p>
+<p>What’s even better is that you can have multiple such environments for different projects and switch between them easily. 
+Of course, you have to be aware of file synchronization, networking, and so on, but with proper setup, it becomes a game-changer. 
+Need a powerful <span class="caps">CPU</span> machine? Just spin up a Devpod with a powerful <span class="caps">VM</span> in the cloud and connect to it. Need a <span class="caps">GPU</span> for 
+training your model? Shut down your current <span class="caps">CPU</span> machine, spin up a new Devpod with a <span class="caps">GPU</span>, and continue working. No need 
+to install anything locally, no need to worry about dependencies, no need to mess with your local setup. Just work.</p>
+<p>Moreover, since Devpods are usually based on containers or VMs, you can have a clean environment every time you start. 
+And this environment can be easily shared with your team, ensuring that everyone works in the same setup (for example, 
+using the same <code>devcontainers.json</code> file with the same Docker image).</p>
+<p>I won’t lie - it requires some initial effort to set everything up properly, and there are still some rough edges (e.g., 
+latency issues, file synchronization problems, using Git on remote K8s pods, etc.), but the benefits are definitely 
+worth it.</p>
+<h3>GitHub Copilot</h3>
+<p>We (already) live in the age of <span class="caps">AI</span>-assisted programming. That’s just a fact. However, all <span class="caps">LLM</span>-based code assistants are 
+just tools, and you have to use them properly to get the best results. In my opinion, simply giving them a concise 
+description of what you want and asking them to write code for you isn’t enough. You have to be more specific, provide 
+clear scope and context, and guide the model throughout the entire process. It’s you who is the architect, and it’s you 
+who will later be responsible for the code quality, correctness, and maintainability (and it’s also you who will be 
+blamed by your teammates and manager if something goes wrong).</p>
+<p><img alt="Vibe Coding Vibe Debugging" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/vibe-coding-vibe-debugging.png"/></p>
+<div class="caption">
+<p>Somewhere on Reddit</p>
+</div>
+<p>So I’ll start with a “safer” option - <a href="https://github.com/features/copilot">GitHub Copilot</a>. I use it directly in PyCharm 
+and primarily for two purposes: code completion and simple Q&amp;A sessions where I need to remember the pandas <span class="caps">API</span> for the 
+fifteenth time this week.</p>
+<p>Code completion is almost the same as in regular IDEs, but here you get suggestions based on the context of your code 
+(the so-called “fill-in-the-middle” approach). It works really well for boilerplate code, repetitive patterns, or when 
+you’re trying to remember some specific syntax or <span class="caps">API</span> usage. From my experience, it works best for completing either a 
+single line of code or a repetitive block like if/switch-case statements, data processing pipelines, etc. After a couple 
+of lines, it usually goes insane, but that also depends on the model you’re using. Anyway, I found it super useful, 
+especially for exception messages, logging statements, or docstrings. It really speeds up the coding process and helps 
+me focus on the logic rather than strings/boilerplate.</p>
+<p>For the Q&amp;A sessions, I use GitHub Copilot Chat, which is an extension of Copilot that allows you to have a chat-like 
+interaction with the model directly in your <span class="caps">IDE</span>. It also loads the relevant context from your files, so you can ask 
+questions about your codebase, get explanations, or even request code snippets. I mostly use it for quick reminders on 
+how to use some libraries or APIs (pandas, numpy, sklearn, etc.), or for generating small utility functions or bash 
+scripts. I <em>really</em> loved it when I was analyzing some messy data in Jupyter Notebooks, as I completely suck at using 
+matplotlib/seaborn for plotting. It helped me generate the code snippets I needed in seconds - with just my prompts of 
+what I wanted to see on the plots. Awesome!</p>
+<h3>Codex</h3>
+<p>Going further into the <span class="caps">AI</span>-assisted programming world, we have <a href="https://github.com/openai/codex">OpenAI Codex</a>. It is a 
+coding agent from OpenAI that runs locally on your computer and can do stuff that pretty much any other <span class="caps">LLM</span>-based coding 
+agent can do. It still has <strong>0.*</strong> version, so you may expect some rough edges and bugs (boy, how I hated it at the 
+beginning…), but overall it works quite well for me. What I really like about it is that it’s open source and very 
+customizable. You’re not bound to a specific model provider like OpenAI or Anthropic - you can use any <span class="caps">LLM</span> you like, 
+including open-source ones - just configure Codex properly.</p>
+<p>Generally speaking, I’m on the darker side of the Moon on this question. I mean, I prefer the old-school approach to 
+programming where you’re in charge of the architecture and the codebase. I’m not a big fan of the “let the <span class="caps">AI</span> write the 
+code for you” approach, as I believe it leads to messy, unmaintainable codebases. I mean… it really does. I’ve seen 
+multiple times what these coding agents produce when left alone, and it’s usually a pile of garbage that nobody wants to 
+maintain. You’re writing in Python 3.13? Great! Your coding agent will be writing in Python 3.7, at best. You want to 
+use type hints? Sure, your coding agent will ignore them completely. You want to follow some style guide? Nope, your 
+coding agent will produce code in its own style. And so on.</p>
+<p>But I can’t deny the progress. These coding agents are truly amazing, and they’re getting better every day. So I use 
+Codex as a co-pilot that sometimes takes over certain parts I don’t like doing myself:</p>
+<ul>
+<li>Writing tests (unit tests, integration tests, etc.). LLMs excel at generating tests based on function signatures and docstrings. Don’t forget to review and tweak them a bit, though.</li>
+<li>Writing one-time scripts (data processing, visualization, metrics analysis, etc.). These are usually boring and require neither good architecture nor maintainability, so letting the <span class="caps">AI</span> write them is a good idea. Just provide a clear prompt and context, and let the model do its magic.</li>
+<li>Refactoring small classes or modules with clear scope and functionality. It doesn’t require much thinking or deep understanding of the architecture, so it’s a good fit for <span class="caps">AI</span> assistance (you may think of it as a junior developer trying to learn from <em>your</em> experience). Again, review the code afterward.</li>
+<li>Implementing your ideas into code when the architecture is already defined. You know what you want to achieve, you have a clear plan, and you just need some code to implement it. Provide a clear prompt and context, describe inputs and outputs, describe your architecture in detail, and let the model generate the code for you. It really works well when you have a clear vision of what you want to achieve.</li>
+</ul>
+<p>The latter one still should be taken with caution, as sometimes the model may just “not believe you” and keep trying to 
+implement its own vision of the architecture. I’ve seen it trying to write a small proxy wrapper that proxies calls to 
+an inner object. <span class="caps">DFS</span> naturally appears here, as a proxy of a proxy will simply call the final inner object at the end, 
+but boy, the model just couldn’t understand this simple fact and kept trying to implement some weird “proxy-object 
+mappings” and loops, just to implement this <span class="caps">DFS</span> that’s <em>already there</em> by design.</p>
+<pre><code class="language-python">class SomeProtocol(Protocol):
+    def do_something(self) -&gt; Any:
+        ...
+
+class AnActualObject(SomeProtocol):
+    def do_something(self) -&gt; Any:
+        return "Doing something!"
+
+class Proxy(SomeProtocol):
+    def __init__(self, inner: SomeProtocol):
+        self._inner = inner
+
+    def do_something(self) -&gt; Any:
+        # Simply delegate the call to the inner object
+        return self._inner.do_something()
+
+
+a = AnActualObject()
+b = Proxy(a)
+c = Proxy(b)
+print(c.do_something())  # Output: Doing something! - DFS happens naturally, no extra code/loops/maps needed
+</code></pre>
+<p>These are powerful tools. But they’re still tools. You have to use them wisely and remember that “with great power comes 
+great responsibility.”</p>
+<h2>Things that I Rarely Use (but Still Find Useful)</h2>
+<h3>Jupyter</h3>
+<p><a href="https://jupyter.org/">Jupyter Notebooks</a> are super useful for prototyping, data exploration, and analysis. 
+But they’re more of a Data Scientist’s tool rather than an <span class="caps">ML</span> Engineer’s. However, sometimes I do use them for quick 
+experiments, data visualization, or creating baseline models quickly.</p>
+<p>Don’t forget though that Notebooks are still code that someone (including you) may find useful later. So commit them to 
+your repository as well, and try to keep them clean and organized (create a separate folder for them, like “notebooks”, 
+“experiments”, “junk”, etc.). I’ve rarely seen them being properly maintained in production codebases though…</p>
+<h3>Scikit-learn</h3>
+<p><a href="https://scikit-learn.org/stable/">Scikit-learn</a> is an amazing library for classical machine learning algorithms. 
+You’ve probably used it a lot during your studies or in your first <span class="caps">ML</span> projects on <a href="https://www.kaggle.com/">Kaggle</a>. 
+However, it’s rarely used in real production systems nowadays. At least, from my personal experience. Many problems 
+today are solved using deep learning approaches and libraries like <a href="https://pytorch.org/">PyTorch</a> or more high-level 
+ones like <a href="https://huggingface.co/docs/transformers/index">Transformers</a> or 
+<a href="https://huggingface.co/docs/diffusers/index">Diffusers</a>.</p>
+<p>However, I still love sklearn for its simplicity, well-designed <span class="caps">API</span>, and wide range of both <span class="caps">ML</span> models and utilities 
+(preprocessors, metrics, train-test splitters, and so on). The developers did a really great job there in simplifying 
+data visualization and model evaluation, e.g., plotting calibration curves or fitting 
+<a href="https://en.wikipedia.org/wiki/Isotonic_regression">isotonic regressions</a>.</p>
+<p><img alt="Isotonic Regression" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/isotonic_regression.png"/></p>
+<div class="caption">
+<p>Linear and Isotonic regression examples from <a href="https://en.wikipedia.org/wiki/Isotonic_regression">Wikipedia</a></p>
+</div>
+<p>Another great thing about it is that many libraries borrow its <span class="caps">API</span> design and are compatible with sklearn models 
+(or any model that you make sklearn-compatible by implementing proper methods). For example, I like wrapping a 
+<a href="https://catboost.ai/">CatBoost</a> model into an sklearn-compatible class and using it with libraries like 
+<a href="https://github.com/cleanlab/cleanlab">Cleanlab</a> for dataset quality analysis, or with <a href="https://mlflow.org/">MLflow</a> 
+for model logging.</p>
+<h3>Deep Research</h3>
+<p>Going back to the <span class="caps">AI</span> hype, I just have to mention Deep Research solutions. There are many of them nowadays; one person 
+might favor OpenAI’s, another might prefer Anthropic’s, Perplexity’s, and so on.</p>
+<p>At their core, they’re just powerful LLMs with tool-calling abilities and a set of pre-defined web-search and data 
+analysis tools, of course. So these are agentic systems, meaning that they can both reason and act. Sometimes these 
+LLMs are additionally fine-tuned to perform research tasks better (e.g., 
+<a href="https://platform.openai.com/docs/models/o3-deep-research"><code>o3-deep-research</code></a> by OpenAI).</p>
+<p>These solutions allow you to ask complex research questions and get detailed answers with references, citations, and 
+even data analysis. You can ask them to find relevant papers, compare different approaches, explore a new subject, 
+and so on.</p>
+<p>My success stories include things like finding sources for specific datasets, compiling a “current state of the art” 
+list on a particular topic (e.g., “context management in LLMs”), and so on. Of course, you shouldn’t blindly trust 
+these models, but they’re a great starting point for your own research. It’s like having a good research-focused blog 
+post written for you in minutes (I remember that before such tools, I had to open dozens of blog posts and articles 
+and go through them just to get a better understanding of a topic; now I just go through a deep research output, read 
+several relevant papers and blog posts, and that’s pretty much it).</p>
+<p>The downside is that these solutions are usually paid (at least, the good ones are). Hopefully, either you or your 
+company can afford it.</p>
+<h2>Tools that I Really <span class="caps">DO</span> <span class="caps">NOT</span> Use</h2>
+<h3>Anaconda</h3>
+<p><a href="https://www.anaconda.com/">Anaconda</a> is a popular distribution of Python and R for scientific computing and data 
+analysis. It comes with a lot of pre-installed packages and tools, including Jupyter Notebooks, pandas, numpy, and 
+whatever you can imagine. It’s like a specialized environment, with its own package manager, interface, and everything 
+else. Many people usually start with it because it simplifies the setup process for data science projects. Many years 
+ago, I started with it as well.</p>
+<p>However, as you progress and start working on more complex, real-world systems, you’ll quickly hit the limitations of 
+Anaconda. Managing dependencies, creating reproducible environments, working collaboratively, and deploying applications 
+becomes much more complicated. That’s where you turn to more flexible and powerful tools like <code>uv</code>, <code>docker</code>, 
+<code>kubernetes</code>, and so on.</p>
+<p>It’s probably okay to use it for pure data science projects, but <span class="caps">ML</span> Engineering usually requires more robust and 
+scalable solutions.</p>
+<h3>Debugger</h3>
+<p>Everyone who learns programming starts using debuggers on like day one. Breakpoints, step in/out, variable inspection, 
+and so on and so forth. Pretty much every <span class="caps">IDE</span> has a built-in debugger now, and it’s super useful for beginners to 
+understand how code works and why it doesn’t work as expected.</p>
+<p><img alt="Debugging intensifies" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/debugging.png"/></p>
+<div class="caption">
+<p>Debugging intensifies with the help of <span class="caps">AI</span></p>
+</div>
+<p>However, there’s one caveat here. You can debug code that is running either locally or on a remote machine with proper 
+setup (remember devpods?) in your <span class="caps">IDE</span>.</p>
+<p>Now, imagine a real production system. Let’s say it has several microservices running in Docker containers on a 
+Kubernetes cluster (using several programming languages, of course), several databases, caches, and so on (not even 
+talking about load balancers, CDNs, and other infrastructure components). And imagine that you’re seeing an exception 
+in your logs (stored somewhere in Elastic, of course). How would you debug it? Take into account that any correction 
+will also have to go through the entire <span class="caps">CI</span>/<span class="caps">CD</span> pipeline, including tests, image building, deployment, cache invalidation, 
+and so on. It literally may take hours to see the effect of your fix. You have to be extremely careful here. And you 
+have to think in advance about what will happen with the code you’ve written and how it will affect the entire system. 
+Debuggers won’t help you here. That’s why I really like 
+<a href="https://vzhukov.dev/posts/2025/what-i-have-learned-during-my-1275-day-streak-on-leetcode">solving problems on a white paper</a> - it 
+forces you to think through the entire logic and architecture of your code before actually running or even writing it. 
+You actually have to “test your code in your head” before deploying it. Without this skill, you won’t survive in real 
+production systems.</p>
+<p>Don’t get me wrong - debuggers are still super useful for local development and writing small, well-scoped functions. But 
+they may prevent you from thinking through the entire logic and architecture of your code, essentially slowing down your 
+growth as a software engineer.</p>
+<h3>Cursor</h3>
+<p><a href="https://cursor.com/">Cursor</a> is another <span class="caps">AI</span>-powered code assistant (<span class="caps">IDE</span>, actually) that helps you write code faster and 
+“better”. I specifically put “better” in quotes, as from my experience it doesn’t really help with code quality or 
+architecture. I’ve seen these thousands of lines of boilerplate <a href="https://en.wikipedia.org/wiki/Spaghetti_code">spaghetti code</a> 
+generated by Cursor, and it was a nightmare to review PRs created with it. In my opinion, a developer shouldn’t give that 
+much control to an <span class="caps">AI</span> assistant. An <span class="caps">AI</span> assistant should <em>assist</em> you, rather than turn your hardly comprehensible ideas 
+into even more hardly comprehensible code.</p>
+<p>Again, it’s good for prototyping, implementing one-time scripts, or generating boilerplate code that doesn’t require 
+much thinking. But I wouldn’t recommend it for writing real production-grade systems. At least, not now, not until these 
+models get much better at understanding architecture and improve their perception of code quality.</p>
+<h2>Conclusion</h2>
+<p>This long-read is just a glimpse into the vast world of tools and technologies that <span class="caps">ML</span> Engineers use daily. I wouldn’t 
+call myself representative of the <span class="caps">ML</span> Engineering community as well, as every engineer has their own preferences and 
+workflows. Image-focused folks or Data Scientists may completely disagree with me on some points, and that’s okay. 
+I just hope that it will help you navigate this complex landscape of <span class="caps">ML</span> Engineering and find the tools that work best 
+for you. Especially if you’re building <span class="caps">NLP</span>-focused systems like I do.</p>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://vzhukov.dev/posts/category/software-engineering">Software Engineering</a> on
+    <time class="published" datetime="2025-11-11T10:40:00+01:00">        11th
+November 2025
+    </time>
+</footer>
+<section class="tags">
+<a href="https://vzhukov.dev/posts/tag/data-science">Data Science</a>
+<a href="https://vzhukov.dev/posts/tag/devops">DevOps</a>
+<a href="https://vzhukov.dev/posts/tag/machine-learning">Machine Learning</a>
+<a href="https://vzhukov.dev/posts/tag/mlops">MLOps</a>
+<a href="https://vzhukov.dev/posts/tag/nlp">NLP</a>
+<a href="https://vzhukov.dev/posts/tag/python">Python</a>
+<a href="https://vzhukov.dev/posts/tag/tools">Tools</a>
+</section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a></li>
+</ul>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://vzhukov.dev/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Privacy</h2>
+<p>
+                        This site uses Google Analytics to understand visitor traffic and improve content.
+                        It collects anonymous data like country, language, and pages visited - no personal
+                        information. By continuing to browse, you agree to this minimal tracking.
+                        <a href="https://www.google.com/search?q=is+google+analytics+tracking+safe" rel="noopener noreferrer" target="_blank">Read more</a>.</p>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/category/math">Math (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/software-engineering">Software Engineering (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning (1)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack">Essential tools for Machine Learning Engineers: my real-world stack</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/what-i-have-learned-during-my-1275-day-streak-on-leetcode">What I have learned during my 1275+ day streak on LeetCode</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.js,npm/prismjs@1.30.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+</html>
