@@ -397,6 +397,11 @@ mark {
 	font-weight: bold;
 }
 
+th, td {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 td {
 	vertical-align: top;
 	padding: 0.25em;

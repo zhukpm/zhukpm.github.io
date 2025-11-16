@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Data-Grounded Country Comparison: The Service Idea – Viacheslav Zhukov</title>
+<meta charset="utf-8"/>
+<meta content="Viacheslav Zhukov" property="og:site_name"/>
+<meta content="Data-Grounded Country Comparison, Country ranking, Criteria weighting, Weighted scoring model, Data collection, Data imputation, Machine Learning, Data Science, Numbeo alternative, Digital nomads, Multi-criteria decision making, Country comparison, Best countries to live, Data visualization" name="keywords"/>
+<meta content="article" property="og:type"/>
+<meta content="Data-Grounded Country Comparison: The Service Idea - Viacheslav Zhukov" property="og:title"/>
+<meta content="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea" property="og:url"/>
+<meta content="2025-11-16T10:00:00+01:00" property="article:published_time"/>
+<meta content="Viacheslav Zhukov" property="article:author"/>
+<meta content="AI &amp; ML Based Applications" property="article:section"/>
+<meta content="The idea of comparing countries to choose the best one for living, working, or traveling comes to many digital nomads and remote workers. And there are already services that help with that, like the famous Numbeo. I personally love using it. However, it is crowdsourced, which means its data points …" name="description"/>
+<meta content="The idea of comparing countries to choose the best one for living, working, or traveling comes to many digital nomads and remote workers. And there are already services that help with that, like the famous Numbeo. I personally love using it. However, it is crowdsourced, which means its data points …" property="og:description"/>
+<meta content="Country Comparison" name="tags"/>
+<meta content="Country Comparison" property="article:tag"/>
+<meta content="Data Collection" name="tags"/>
+<meta content="Data Collection" property="article:tag"/>
+<meta content="Data Science" name="tags"/>
+<meta content="Data Science" property="article:tag"/>
+<meta content="Mathematical Modeling" name="tags"/>
+<meta content="Mathematical Modeling" property="article:tag"/>
+<meta content="https://vzhukov.dev/images/008/countries-comparison-idea-thumb.png" property="og:image"/>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="icon"/>
+<link href="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://vzhukov.dev"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://vzhukov.dev/posts"}, {"@type": "ListItem", "position": 3, "name": "2025", "item": "https://vzhukov.dev/posts/2025"}, {"@type": "ListItem", "position": 4, "name": "Data grounded country comparison the service idea", "item": "https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea.html"}]}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "author": {"@type": "Person", "name": "Viacheslav Zhukov"}, "publisher": {"@type": "Organization", "name": "Viacheslav Zhukov", "logo": {"@type": "ImageObject", "url": "https://vzhukov.dev/logo_rounded.png"}}, "headline": "Data-Grounded Country Comparison: The Service&nbsp;Idea", "about": "AI & ML Based Applications", "datePublished": "2025-11-16 10:00"}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<h1><a href="https://vzhukov.dev/">Viacheslav Zhukov</a></h1>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://vzhukov.dev/javascript-memes">Javascript Memes</a></li>
+<li><a href="https://vzhukov.dev/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea" rel="bookmark" title="Permalink to Data-Grounded Country Comparison: The Service Idea">Data-Grounded Country Comparison: The Service Idea</a>
+</h1>
+</header>
+<section class="entry-content key-text-content">
+<p>This post is part 1 of the "Building a Data-Grounded Country Comparison Service" series:</p>
+<ol id="series_parts">
+<li class="active">
+<a href="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea">Data-Grounded Country Comparison: The Service Idea</a>
+</li>
+</ol>
+<p>The idea of comparing countries to choose the best one for living, working, or traveling comes to many digital nomads 
+and remote workers. And there are already services that help with that, like the famous 
+<a href="https://www.numbeo.com/">Numbeo</a>. I personally love using it. However, it is crowdsourced, which means its data points 
+are user-submitted and can be biased or outdated. Being data/<span class="caps">ML</span>-addicted, I wanted to create a more data-grounded 
+approach to country comparison. That’s where I came up with this service idea (which, again, is not completely new). 
+However, I find it a great playground for experimenting with data collection, analysis, visualization techniques, 
+service design, development, deployment, and more. Moreover, it’s only the starting point, and I plan to document the 
+entire journey in this series of posts. It will be a real-time experience of building something from scratch, so I 
+expect a lot of reflections, learnings, and maybe even failures along the way. Let’s see how it goes.</p>
+<p><img alt="Data-Grounded Country Comparison: The Service Idea" class="image-process-crisp" src="https://vzhukov.dev/images/008/derivatives/crisp/1x/countries-comparison-idea-thumb.png" srcset="https://vzhukov.dev/images/008/derivatives/crisp/1x/countries-comparison-idea-thumb.png 1x, https://vzhukov.dev/images/008/derivatives/crisp/2x/countries-comparison-idea-thumb.png 2x, https://vzhukov.dev/images/008/derivatives/crisp/4x/countries-comparison-idea-thumb.png 4x"/></p>
+<div class="caption">
+<p>Something about country comparison and data analysis</p>
+</div>
+<h2>The Idea</h2>
+<blockquote>
+<p>Given a set of criteria that matter to you, get a ranked list of countries that best match your preferences for living, working, or traveling.</p>
+</blockquote>
+<p>That’s pretty much the core of the idea. However, it already raises several questions:</p>
+<ol>
+<li>Criteria can differ widely from person to person.</li>
+<li>The importance of each criterion can vary significantly; it’s a matter of personal preference.</li>
+<li>To get a ranked list, we need to gather data for all countries and criteria, which can be extremely challenging in some cases.</li>
+</ol>
+<p>Let’s try to address these questions one by one.</p>
+<h2>Criteria</h2>
+<p>When thinking about criteria for comparing countries, several aspects may immediately come to mind. Here are several examples:</p>
+<ul>
+<li><span class="dquo">“</span>I want to live in a warm country by the ocean.”</li>
+<li><span class="dquo">“</span>I want to work in a country with a low cost of living and good internet connectivity.”</li>
+<li><span class="dquo">“</span>I want to feel safe and secure wherever I go.”</li>
+<li><span class="dquo">“</span>I’m <span class="caps">OK</span> with some level of underdevelopment if nature is beautiful and people are friendly.”</li>
+<li><span class="dquo">“</span>I should be able to easily learn the local language and culture.”</li>
+<li><span class="dquo">“</span>The legalisation process for remote workers should be fast and straightforward.”</li>
+<li>and so on…</li>
+</ul>
+<p>So far, I narrowed down the criteria to the following categories:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">#</th>
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: center;">What it means to <em>me</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Climate and Environment</td>
+<td style="text-align: center;">I want to live in a sunny, warm place with clean air. It shouldn’t be too hot, though. I also prefer mild winters (I’m not a fan of snow at all), and I don’t like it when it’s rainy all the time.</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Generous People         ️</td>
+<td style="text-align: center;">I want to be surrounded by friendly and helpful people. I want to feel welcomed and accepted.</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Safety and Security</td>
+<td style="text-align: center;">I want to feel safe walking the streets late at night. The chances of being a victim of crime should be low.</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Society Development Level</td>
+<td style="text-align: center;">I prefer countries with clean, well-maintained streets and no urban decay, reliable transportation and social infrastructure (fast internet, dependable banking, good food), and accessible, high-quality education and healthcare. I also value a developed, diverse cultural scene with attractions and entertainment, and active scientific and research activity across society.</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Economy Development Level</td>
+<td style="text-align: center;">I want to live in a country with a stable and developing economy, a low unemployment rate, and good job opportunities. I also prefer countries with a reasonable cost of living and affordable housing.</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">Freedom, Rights, and Peace</td>
+<td style="text-align: center;">I want to live in a democratic country with high levels of personal freedom, human rights, and political stability. I also value countries that are peaceful and have low levels of conflict and violence.</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">Language and Culture</td>
+<td style="text-align: center;">I want to live in a country where I can easily learn the local language and culture.</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">Remote Work Legalisation</td>
+<td style="text-align: center;">I want to live in a country that offers remote work visas or digital nomad programs with straightforward application processes, reasonable fees, and favourable tax policies for remote workers. It should be easy to obtain and renew the residence permit, and potentially citizenship later on.</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">Nature and Outdoors</td>
+<td style="text-align: center;">I want to live in a country with beautiful nature, diverse landscapes, and plenty of opportunities for outdoor activities like hiking, biking, and water sports.</td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">Proximity to Home</td>
+<td style="text-align: center;">I want to live in a country that is not too far from my home country, so I can easily visit my family and friends. I also prefer countries with good flight connections and affordable travel options.</td>
+</tr>
+</tbody>
+</table>
+<p>That’s a good starting point. However, it already seems quite impossible to find a country that would score highly on 
+all these criteria. That’s why we need to consider personal preferences as well.</p>
+<h2>Importance of Criteria</h2>
+<p>I will use the most straightforward approach here: let the user assign weights to each criterion based on its importance. 
+The total country score can then be calculated as a weighted sum of individual criterion scores:</p>
+<div class="math">$$ score(Country) = \frac{\sum_{C \in Criteria} w_C \times score(C, Country)}{\sum_{C \in Criteria} w_C } $$</div>
+<p>Each <span class="math">\(score(Criterion, Country)\)</span> will be a value between <span class="math">\(0\)</span> and <span class="math">\(1\)</span> showing how well the country performs on that 
+criterion. That way the final country score will also be between <span class="math">\(0\)</span> and <span class="math">\(1\)</span>, where <span class="math">\(1\)</span> means the country is perfect on 
+all criteria.</p>
+<h2>Data Collection</h2>
+<p>That’s going to be the most challenging part. For each criterion, we will gather a set of <em>metrics</em> or <em>indicators</em> 
+that can be used to evaluate how well a country performs on that criterion. For example, for the “Climate and 
+Environment” we’ll have metrics like average summer/winter temperature, average annual rainfall, air quality index, 
+Environmental Performance Index, etc.</p>
+<p>The problem, however, is that not all metrics are available for all countries. Indicators like <span class="caps">GDP</span> per capita, Human 
+Development Index, or Internet Penetration Rate are widely available, while others like Rudest Nations are available 
+only for a handful of countries. I will try to use indicators that are available for most countries. When a dataset is 
+missing data for some countries, I will try to find alternative sources and, if necessary, use imputation techniques to 
+fill in the gaps. For instance, average summer temperature can be estimated based on the country’s latitude, elevation, 
+proximity to the ocean, and temperatures of neighboring countries. That’s where we’ll use some Machine Learning :)</p>
+<h2>Caveats</h2>
+<p>The whole idea has several caveats that I’d like to acknowledge upfront:</p>
+<ul>
+<li>The criteria and their importance are highly subjective. I defined a set of criteria based on my personal preferences; 
+    however, the service will allow users to customize their priorities by adjusting weights to their own needs.</li>
+<li>The data sources may not be reliable or up-to-date. I will try to use reputable sources, but some datasets may still 
+    be outdated or biased.</li>
+<li>Imputation techniques may introduce errors or biases. When filling in missing data, the estimates may not be accurate 
+    and could affect the final country scores.</li>
+<li>Finally, even within a single country, there can be significant regional differences. A country may score highly on 
+    safety overall, but certain cities or regions may have higher crime rates. You just can’t assign a single score to 
+    a whole country like the <span class="caps">US</span>, China, or Russia. But that’s a price I’m willing to pay for the sake of simplicity!</li>
+</ul>
+<h2>Next Steps</h2>
+<p>I’ll start with the crucial part of the whole service: data collection and analysis. In the next few posts, I will 
+define metrics for each criterion, find data sources, gather the data, and come up with imputation and transformation 
+techniques to make the data usable for country scoring.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://vzhukov.dev/posts/category/ai-ml-based-applications">AI &amp; ML Based Applications</a> on
+    <time class="published" datetime="2025-11-16T10:00:00+01:00">        16th
+November 2025
+    </time>
+</footer>
+<section class="tags">
+<a href="https://vzhukov.dev/posts/tag/country-comparison">Country Comparison</a>
+<a href="https://vzhukov.dev/posts/tag/data-collection">Data Collection</a>
+<a href="https://vzhukov.dev/posts/tag/data-science">Data Science</a>
+<a href="https://vzhukov.dev/posts/tag/mathematical-modeling">Mathematical Modeling</a>
+</section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a></li>
+<li><a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a></li>
+<li><a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack">Essential Tools for Machine Learning Engineers: My Real-World Stack</a></li>
+</ul>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://vzhukov.dev/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Privacy</h2>
+<p>
+                        This site uses Google Analytics to understand visitor traffic and improve content.
+                        It collects anonymous data like country, language, and pages visited - no personal
+                        information. By continuing to browse, you agree to this minimal tracking.
+                        <a href="https://www.google.com/search?q=is+google+analytics+tracking+safe" rel="noopener noreferrer" target="_blank">Read more</a>.</p>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/category/math">Math (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/software-engineering">Software Engineering (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/ai-ml-based-applications">AI &amp; ML Based Applications (1)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning (1)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea">Data-Grounded Country Comparison: The Service Idea</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack">Essential Tools for Machine Learning Engineers: My Real-World Stack</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/what-i-have-learned-during-my-1275-day-streak-on-leetcode">What I have learned during my 1275+ day streak on LeetCode</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.js,npm/prismjs@1.30.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+</html>
