@@ -60,50 +60,76 @@
 <p><img alt="Language models, bro!" class="image-process-crisp" src="https://vzhukov.dev/images/002/derivatives/crisp/1x/thumb.png" srcset="https://vzhukov.dev/images/002/derivatives/crisp/1x/thumb.png 1x, https://vzhukov.dev/images/002/derivatives/crisp/2x/thumb.png 2x, https://vzhukov.dev/images/002/derivatives/crisp/4x/thumb.png 4x"/></p>
 <p>Modern large language models (LLMs) have demonstrated the best performance for many <span class="caps">NLP</span> tasks from text classification to text generation. But are they really a “silver bullet” or a one-stop-shop solution? Can they be applied across the board? Toloka’s <span class="caps">ML</span> team faces these kinds of tasks all the time, and our answer so far is a resounding “No.” Performance is not the only factor you should be concerned about when developing a model for a real use case. And you probably don’t want to spend your entire department’s budget on it either.</p>
 <p>We’ve created a practical guide on ways to solve text classification problems — depending on how much data you have, the type of data, time and budget constraints, and other factors.</p>
-<h2>Approaches to text classification</h2>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#approaches-to-text-classification">Approaches to text classification</a><ul>
+<li><a href="#old-school-tf-idf-models">Old-school tf-idf models</a></li>
+<li><a href="#first-embeddings-and-pre-trains">First embeddings and pre-trains</a></li>
+<li><a href="#small-transformers">Small transformers</a></li>
+<li><a href="#llms">LLMs</a></li>
+</ul>
+</li>
+<li><a href="#choosing-by-scenario">Choosing by scenario</a><ul>
+<li><a href="#your-goal-is-to-create-a-high-performing-model">Your goal is to create a high-performing model</a></li>
+<li><a href="#you-have-little-data-available">You have little data available</a></li>
+<li><a href="#you-have-a-lot-of-data-available">You have a lot of data available</a></li>
+<li><a href="#you-have-privacy-or-security-concerns-about-your-data">You have privacy or security concerns about your data</a></li>
+<li><a href="#you-have-a-common-task-and-domain">You have a common task and domain</a></li>
+<li><a href="#your-task-or-data-is-very-specific">Your task or data is very specific</a></li>
+<li><a href="#your-model-will-be-used-for-online-inference-under-hundreds-of-milliseconds">Your model will be used for online inference (under hundreds of milliseconds)</a></li>
+<li><a href="#your-model-will-be-used-for-batch-processing-only">Your model will be used for batch processing only</a></li>
+<li><a href="#youre-concerned-about-scalability">You’re concerned about scalability</a></li>
+<li><a href="#you-have-access-to-a-computational-cluster-with-modern-gpus">You have access to a computational cluster with modern GPUs</a></li>
+<li><a href="#you-have-no-access-to-modern-hardware-accelerators">You have no access to modern hardware accelerators</a></li>
+<li><a href="#you-have-a-lot-of-time-to-build-a-model">You have a lot of time to build a model</a></li>
+<li><a href="#you-have-almost-no-time-to-build-a-model">You have almost no time to build a model</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="approaches-to-text-classification">Approaches to text classification</h2>
 <p>Let’s start off with a brief overview of potential models and solutions you could use.</p>
-<h3>Old-school tf-idf models</h3>
+<h3 id="old-school-tf-idf-models">Old-school tf-idf models</h3>
 <p>Models in this category are founded on basic stats like word count and co-occurrences. Reduced feature space is usually passed to one of the classic <span class="caps">ML</span> models like <span class="caps">SVM</span>, <span class="caps">MLP</span> or Naive Bayes. This method is easy to implement and does not require any specific libraries or accelerators — you’re good to go with one of the classic solutions like sklearn or <span class="caps">NLTK</span>. Moreover, these models can easily handle both short and long texts. Given their relatively small size, they’re highly efficient when it comes to training, deployment, and inference.</p>
 <p>Nevertheless, this approach has several drawbacks, the most important one being performance. Compared to other approaches, tf-idf models rank the lowest. Additionally, you’ll have to carry out extensive preprocessing of your texts (misspellings, stopwords, punctuation, lemmatization, and more). You also need a lot of data to produce a robust model — and your data should resemble academic texts, not social media, which can contain numerous misspellings as well as slang.</p>
-<h3>First embeddings and pre-trains</h3>
+<h3 id="first-embeddings-and-pre-trains">First embeddings and pre-trains</h3>
 <p>Word embeddings are excellent for text classification since each word (or sequence of characters) is represented by a vector of numbers containing useful information about the context, use, and semantics.</p>
 <p>Take for example Word2Vec, its variations and implementation within the fastText library — a binary file that you can run to achieve a desired result. While you still need a large dataset to produce solid word embeddings and to train the classifier head, with proper configuration you can significantly reduce your preprocessing efforts. As a single multiprocessing library, it can run right in the system’s console.</p>
 <p>On average, it takes anywhere from 10 minutes to an hour to create a fastText model between 300 <span class="caps">MB</span> and 2 <span class="caps">GB</span>. This model can handle texts of any size, and the inference is incredibly fast given that the sole focus is on text embedding construction and processing by an <span class="caps">MLP</span>. The availability of pre-trained word embeddings for a variety of languages makes it a baseline for almost any text classification problem.</p>
-<h3>Small transformers</h3>
+<h3 id="small-transformers">Small transformers</h3>
 <p>This category includes transformer-based language models such as <span class="caps">BERT</span> and RoBERTa — currently considered to be state-of-the-art <span class="caps">NLP</span>. Even though it may seem obvious that a model with 110 million parameters is “small”, and a model with 175 billion parameters is “large”, it’s not easy to distinguish between small and large transformers. Yet there are several key advantages that make transformers a great option. Namely, they’re resistant to misspellings and usually require little preprocessing compared to other models.</p>
 <p>Since you probably won’t be training your own <span class="caps">BERT</span> and will likely be using a pre-trained model instead from a library or hub (like Hugging Face), you can use comparatively small datasets to create decent models. If you have a common task, and your domain is similar to one that already has a tuned version, you may only need a couple hundred or thousand samples to slightly tune the model and achieve great results. The model size usually ranges from 600 <span class="caps">MB</span> to several gigabytes. It’s also a good idea to have access to GPUs as the training may take some time to complete.</p>
 <p>However, there are also some disadvantages to consider. The produced model is much slower compared to Word2Vec, so if you require real-time inference you’ll need to either use a <span class="caps">GPU</span> device or invest in model optimization (graph optimizations, <span class="caps">ONNX</span>, DeepSpeed, and others). Additionally, the length of texts that a model can handle is limited by its architecture and is usually about 512 tokens (~380 words). In practice, a more straightforward approach like taking 192 tokens from the beginning works well.</p>
-<h3>LLMs</h3>
+<h3 id="llms">LLMs</h3>
 <p>It’s likely that you don’t have your own <span class="caps">LLM</span> — they’re really big! The size of the large downloadable version of T5 is about 40 <span class="caps">GB</span>. You’ll have to deploy this model somehow and inference may take time. In which case, you’ll either need to use an expensive computational cluster or opt for a service that provides an <span class="caps">API</span> like OpenAI with its <span class="caps">GPT</span>-3 model.</p>
 <p>One benefit is that LLMs require little data for tuning, and you don’t need to worry about preprocessing. As a side note, approaches like zero-shot or few-shot don’t work well for text classification problems. You’ll need to either fine-tune or p-tune (prompt-tune) your model. Working with APIs is on a whole other level — you’ll need to consider internet access, data security, SLAs, pricing, and more. However, achievable performance is the biggest plus.</p>
-<h2>Choosing by scenario</h2>
+<h2 id="choosing-by-scenario">Choosing by scenario</h2>
 <p>As expected, all these approaches have their own pros and cons. Consider a variety of architectures to find a good fit for a specific real-world task. We recommend basing your decision on the actual requirements you have for your text classification problem.</p>
 <p>Let’s go over some of the most common cases we’ve encountered — as well as our recommended approaches. Your text classification task will likely fall under one of these scenarios.</p>
-<h3>Your goal is to create a high-performing model</h3>
+<h3 id="your-goal-is-to-create-a-high-performing-model">Your goal is to create a high-performing model</h3>
 <p>If performance really matters, choose a transformer. And spend some time searching for the optimal architecture and pre-trained weights, expanding your dataset, optimizing your pipeline and parameters, and so on. Also, try tuning an <span class="caps">LLM</span>, either your own or via an <span class="caps">API</span>. Just know that it will take time.</p>
-<h3>You have little data available</h3>
+<h3 id="you-have-little-data-available">You have little data available</h3>
 <p>Go for LLMs or a small tuned transformer. If your task is general enough, you can leverage extensive model catalogs that are available across various hubs.</p>
-<h3>You have a lot of data available</h3>
+<h3 id="you-have-a-lot-of-data-available">You have a lot of data available</h3>
 <p>Start with fastText and establish a baseline. This may be enough if your performance requirements aren’t that strict. If they are, go for the fine-tuning process of one of the small pre-trained transformers. If <span class="caps">API</span> is an option and you have a dedicated budget, you can try tuning an <span class="caps">LLM</span> too.</p>
-<h3>You have privacy or security concerns about your data</h3>
+<h3 id="you-have-privacy-or-security-concerns-about-your-data">You have privacy or security concerns about your data</h3>
 <p>You don’t want your data to leave a specific contour and be logged by a third-party service. <span class="caps">API</span> is not an option until you make your logging and security concerns clear to the provider. Choose local models that you can deploy yourself according to your hardware and software setup.</p>
-<h3>You have a common task and domain</h3>
+<h3 id="you-have-a-common-task-and-domain">You have a common task and domain</h3>
 <p>Someone has probably already solved the task for you and you can apply their solutions. Simply look for applicable tuned transformers. LLMs will likely work too, but we’ve noticed that previously tuned transformers can outperform LLMs if the dataset is extremely small (a couple hundred samples). The difference though is minute.</p>
-<h3>Your task or data is very specific</h3>
+<h3 id="your-task-or-data-is-very-specific">Your task or data is very specific</h3>
 <p>In this case, LLMs have the best performance compared to other approaches. Training an adequate small transformer is a challenge under these circumstances, and other architectures usually perform much worse.</p>
-<h3>Your model will be used for online inference (under hundreds of milliseconds)</h3>
+<h3 id="your-model-will-be-used-for-online-inference-under-hundreds-of-milliseconds">Your model will be used for online inference (under hundreds of milliseconds)</h3>
 <p>Try fastText because of its speed. If you’re not satisfied with the quality, you can try using a small transformer. However, you’ll most likely have to use an optimization mechanism or deploy your model with access to a <span class="caps">GPU</span>. There are lots of ways to speed up inference with <span class="caps">BERT</span>-like models. LLMs are usually not an option here unless they’ve been optimized.</p>
-<h3>Your model will be used for batch processing only</h3>
+<h3 id="your-model-will-be-used-for-batch-processing-only">Your model will be used for batch processing only</h3>
 <p>Opt for a large model. While it seems straightforward at first glance, you still need an understanding of timing so that your batches don’t stack up.</p>
-<h3>You’re concerned about scalability</h3>
+<h3 id="youre-concerned-about-scalability">You’re concerned about scalability</h3>
 <p>For example, your model will be widely used, and you expect high <span class="caps">RPS</span> on its endpoint. You’ll probably apply an orchestration mechanism like Kubernetes, assuming that your pods can be deployed and destroyed quickly, in which case there may be restrictions on model size (namely, image size). Therefore, fastText and small transformers are common options.</p>
-<h3>You have access to a computational cluster with modern GPUs</h3>
+<h3 id="you-have-access-to-a-computational-cluster-with-modern-gpus">You have access to a computational cluster with modern GPUs</h3>
 <p>If so, you’re lucky! You can play with different types of transformers, even large ones, but the real question is, can you use a node pool with GPUs for inference? If yes, you can choose whatever you want, even LLMs. If not, you’ll probably find yourself optimizing a small transformer.</p>
-<h3>You have no access to modern hardware accelerators</h3>
+<h3 id="you-have-no-access-to-modern-hardware-accelerators">You have no access to modern hardware accelerators</h3>
 <p>That’s unfortunate to hear! Start with basic approaches and train a fastText model. You can also train a transformer model in this setup, but it will require a deeper understanding of optimization mechanisms. Another option is to move from classic libraries into something more specific like FasterTransformer.</p>
-<h3>You have a lot of time to build a model</h3>
+<h3 id="you-have-a-lot-of-time-to-build-a-model">You have a lot of time to build a model</h3>
 <p>Try any architecture, different pre-trains or parameters, and perform “loss-watching”.</p>
-<h3>You have almost no time to build a model</h3>
+<h3 id="you-have-almost-no-time-to-build-a-model">You have almost no time to build a model</h3>
 <p>In this case, fastText and <span class="caps">API</span>-accessible LLMs are good options. If your task is popular, you can tune an appropriate small transformer with a default set of hyperparameters. Still, <span class="caps">API</span>-accessible LLMs are usually the best choice.</p>
 <p>As you can see, there’s no “silver bullet” or “one-size-fits-all” approach. As a key takeaway, try to avoid looking at your text classification challenge with only performance in mind. There are other factors that are worth considering like inference and training time, budget, scalability, privacy, data type, and so on.</p>
 </section>

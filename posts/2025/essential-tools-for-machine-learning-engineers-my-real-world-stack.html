@@ -88,8 +88,43 @@ that help me do my job faster and better. As a bonus, I’ll also include a list
 it’s arguable and may easily spark discussions, but it’s still true for me). I hope it’ll be useful for readers as well, 
 and maybe someone will even discover something new to try and play with. Beginners may find it a good list of technologies 
 to explore and learn.</p>
-<h2>Tools that I <span class="caps">DO</span> Use a Lot</h2>
-<h3>An <span class="caps">IDE</span> (Integrated Development Environment)</h3>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#tools-that-i-do-use-a-lot">Tools that I <span class="caps">DO</span> Use a Lot</a><ul>
+<li><a href="#an-ide-integrated-development-environment">An <span class="caps">IDE</span> (Integrated Development Environment)</a></li>
+<li><a href="#uv">uv</a></li>
+<li><a href="#ruff">ruff</a></li>
+<li><a href="#pyright-mypy">pyright / mypy</a></li>
+<li><a href="#git">Git</a></li>
+<li><a href="#pre-commit">pre-commit</a></li>
+<li><a href="#iterm-terminal">iTerm (Terminal)</a></li>
+<li><a href="#ipython">IPython</a></li>
+<li><a href="#docker-and-docker-compose">Docker and Docker Compose</a></li>
+<li><a href="#kubernetes">Kubernetes</a></li>
+<li><a href="#k9s">k9s</a></li>
+<li><a href="#mlflow">MLflow</a></li>
+<li><a href="#postman">Postman</a></li>
+<li><a href="#devpods">Devpods</a></li>
+<li><a href="#github-copilot">GitHub Copilot</a></li>
+<li><a href="#codex">Codex</a></li>
+</ul>
+</li>
+<li><a href="#things-that-i-rarely-use-but-still-find-useful">Things that I Rarely Use (but Still Find Useful)</a><ul>
+<li><a href="#jupyter">Jupyter</a></li>
+<li><a href="#scikit-learn">Scikit-learn</a></li>
+<li><a href="#deep-research">Deep Research</a></li>
+</ul>
+</li>
+<li><a href="#tools-that-i-really-do-not-use">Tools that I Really <span class="caps">DO</span> <span class="caps">NOT</span> Use</a><ul>
+<li><a href="#anaconda">Anaconda</a></li>
+<li><a href="#debugger">Debugger</a></li>
+<li><a href="#cursor">Cursor</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</div>
+<h2 id="tools-that-i-do-use-a-lot">Tools that I <span class="caps">DO</span> Use a Lot</h2>
+<h3 id="an-ide-integrated-development-environment">An <span class="caps">IDE</span> (Integrated Development Environment)</h3>
 <p>Okay, this one is a no-brainer. But it’s still better to mention it explicitly… Don’t get me wrong, writing code in 
 <code>nano</code> is awesome (and sometimes you just won’t have any other way to edit text files), but it’s not the most efficient 
 approach for your day-to-day work. I personally use PyCharm (the paid version, of course), but VSCode can also be a 
@@ -103,7 +138,7 @@ components, libraries, and production code. Then you use an <span class="caps">I
 experiments/analysis only. Fortunately, modern IDEs have excellent support for Notebooks as well, so you can both write 
 production code and experiment in Notebooks within the same environment (until your <span class="caps">IDE</span> crashes with <span class="caps">OOM</span> or 100% <span class="caps">CPU</span> 
 load, but that’s another story).</p>
-<h3>uv</h3>
+<h3 id="uv">uv</h3>
 <p><a href="https://github.com/astral-sh/uv">uv</a> is an “extremely fast Python package and project manager, written in Rust”. 
 Many people use <code>pip</code>, <code>pipenv</code>, <code>poetry</code> or Anaconda for managing Python packages and virtual environments, but since 
 I discovered <code>uv</code>, I haven’t looked back. It’s superfast, simple, and does exactly what I need. It creates virtual 
@@ -166,7 +201,7 @@ their versions quite often.</p>
 all the packages you have installed. This is super useful for ensuring that your project works the same way on 
 different machines and environments, especially if you’re installing these dependencies later in a Docker container or 
 on a remote server.</p>
-<h3>ruff</h3>
+<h3 id="ruff">ruff</h3>
 <p><a href="https://docs.astral.sh/ruff/">ruff</a> is an <em>extremely</em> fast Python linter and code formatter, written in Rust. It’s 
 really fast. I mean, really. Compared to other Python linters, of course. Why is that? Because it’s written in Rust. 
 You should get used to it - there are many cool tools appearing in Rust, and they are usually <em>much</em> faster than their 
@@ -177,7 +212,7 @@ better to agree on some style guide with your team before committing a configura
 otherwise expect a lot of 🔥).</p>
 <p>In the end, it lets you write your code faster without thinking about proper spacing, quotes, line length, temporary 
 imports, etc. Everything will be checked and fixed automatically, so the resulting code is clean and follows styling guidelines.</p>
-<h3>pyright / mypy</h3>
+<h3 id="pyright-mypy">pyright / mypy</h3>
 <p>Both of these are static type checkers for Python. What does this mean? It means that they analyze your code and check 
 if the types of variables, function arguments, and return values are consistent with the type hints you’ve provided. 
 To make it all work, you need to do two things:</p>
@@ -225,7 +260,7 @@ use it instead of the built-in type checker.</p>
 being merged into the main branch is type-safe, and in pre-commit hooks to check the code before committing or pushing 
 it to the remote repository. However, it’s important to remember that these tools are not a silver bullet, and you still 
 need to write tests and do code reviews.</p>
-<h3>Git</h3>
+<h3 id="git">Git</h3>
 <p>This one is obvious. <a href="https://git-scm.com/">Git</a> is a version control system that helps you track changes in your 
 code and collaborate with others. There are even plenty of <span class="caps">GUI</span> clients and <span class="caps">IDE</span> integrations for Git, so you don’t have 
 to use the command line (however, being honest, sometimes it’s just faster or even inevitable, especially if you’re 
@@ -234,7 +269,7 @@ doing something more complex than just committing and pushing changes).</p>
 helps sometimes. Especially if you’re building real production systems.</p>
 <p>If you decide to work with more complicated things like datasets, images, etc., you may find Git <span class="caps">LFS</span> quite useful. 
 However, there are other tools for dataset management as well.</p>
-<h3>pre-commit</h3>
+<h3 id="pre-commit">pre-commit</h3>
 <p><a href="https://pre-commit.com/">pre-commit</a> is a framework for managing and maintaining multi-language pre-commit hooks 
 (just as written on their website). This means that you can use it to run various checks automatically before committing 
 your code. These checks can include running linters, formatters, type checkers (pyright or mypy, as described above), 
@@ -279,14 +314,14 @@ repos:
 <div class="caption">
 <p>My pre-commit configuration file for pre-push hooks</p>
 </div>
-<h3>iTerm (Terminal)</h3>
+<h3 id="iterm-terminal">iTerm (Terminal)</h3>
 <p>Being familiar with the terminal is a must for any software engineer (even for <span class="caps">ML</span> Engineers, in my opinion). Navigating 
 the file system, running scripts, installing packages, managing Git repositories, making requests, connecting to remote 
 machines or clusters, running and managing Docker… This list is almost endless. For some of these tasks you can use a 
 <span class="caps">GUI</span>, but it’s usually much, much faster just to type a few commands and hit Enter.</p>
 <p>I won’t say that I’m a master of the terminal though. Fortunately, LLMs are getting better and better at writing shell 
 scripts. But you have to be able to <em>read</em> and <em>understand</em> what’s happening (and tweak it, of course).</p>
-<h3>IPython</h3>
+<h3 id="ipython">IPython</h3>
 <p><a href="https://ipython.org/">IPython</a> is an interactive Python shell that has a lot of cool features compared to the standard 
 Python <span class="caps">REPL</span> (it’s worth noting that since <a href="https://docs.python.org/3.14/whatsnew/3.14.html#default-interactive-shell">Python 3.14</a>, 
 the default <span class="caps">REPL</span> has become much more powerful and user-friendly). It has syntax highlighting, autocompletion, magic 
@@ -300,7 +335,7 @@ easier in an IPython shell (God, I probably would never remember the entire pand
 <div class="caption">
 <p>A snippet of my IPython shell</p>
 </div>
-<h3>Docker and Docker Compose</h3>
+<h3 id="docker-and-docker-compose">Docker and Docker Compose</h3>
 <p><a href="https://www.docker.com/">Docker</a> is essentially a tool that lets you package your entire application and all its 
 dependencies into a “container” that can run anywhere (well, depending on the platform you’ve built it for, but let’s 
 not go into details). It ensures that your application works the same way on your local machine, on a remote server, or 
@@ -374,7 +409,7 @@ volumes:
 You can use Docker Engine on Linux for free, but if you’re on Windows or Mac, you’ll have to pay for Docker. And there 
 are alternatives like <a href="https://podman.io/">Podman</a> or <a href="https://rancherdesktop.io/">Rancher Desktop</a>, but I’d say that’s 
 a bit more complicated scenario.</p>
-<h3>Kubernetes</h3>
+<h3 id="kubernetes">Kubernetes</h3>
 <p><a href="https://kubernetes.io/">Kubernetes</a> (or K8s) is an open-source system for automating deployment, scaling, and 
 management of containerized applications (sounds complicated, right?). In simple terms, it’s a tool that helps you 
 manage and orchestrate multiple Docker containers across a cluster of machines (nodes, actual computers that do the 
@@ -388,7 +423,7 @@ essential to understand the basic concepts and how it works. I remember learning
 on YouTube, and then practicing a bit on my own cluster in the cloud. Again, unless you <strong>are</strong> a DevOps engineer, you 
 probably shouldn’t dive very deep into all the peculiarities. But knowing how it works and what happens after you’ve 
 finished training your <span class="caps">BERT</span> is definitely a must.</p>
-<h3>k9s</h3>
+<h3 id="k9s">k9s</h3>
 <p><img alt="k9s screenshot" class="image-process-article-image" src="https://vzhukov.dev/images/007/derivatives/article-image/k9s.png"/></p>
 <div class="caption">
 <p>k9s screenshot from the <a href="https://k9scli.io/">official website</a></p>
@@ -399,7 +434,7 @@ deployed applications, pods, deployment scripts, workloads, read logs, and even 
 perform operations there.</p>
 <p>All this is possible using standard K8s <span class="caps">CLI</span> commands, but <code>k9s</code> makes it much more user-friendly and efficient 
 (everybody loves interactive UIs, right?).</p>
-<h3>MLflow</h3>
+<h3 id="mlflow">MLflow</h3>
 <p><a href="http://mlflow.org/">MLflow</a> is an open-source platform to manage the <span class="caps">ML</span> lifecycle, including experimentation, 
 reproducibility, deployment, and a central model registry.</p>
 <p>When you train a model or perform experiments, you usually want to keep track of various parameters, metrics, artifacts, 
@@ -445,7 +480,7 @@ with mlflow.start_run(run_name="example_run"):
 on. Companies that make such solutions compete with each other, trying to make their products better (as large <span class="caps">AI</span>/<span class="caps">ML</span> 
 companies pay a lot of money to use them), so you can choose whatever you like. For me, it just happened that MLflow 
 was the first one I tried, and it works just fine for my needs.</p>
-<h3>Postman</h3>
+<h3 id="postman">Postman</h3>
 <p><a href="https://www.postman.com/">Postman</a> is an <span class="caps">API</span> client that makes it <em>much</em> easier to create, share, test, and document 
 APIs. If you’re working on a project that involves building or consuming APIs (and it usually does), Postman is a 
 must-have tool. Essentially, it’s a <span class="caps">GUI</span> for <code>curl</code> with extra features. But since everybody loves GUIs (we already know 
@@ -459,7 +494,7 @@ hit Send.</p>
 <div class="caption">
 <p>Postman screenshot from the <a href="https://www.postman.com/">official website</a></p>
 </div>
-<h3>Devpods</h3>
+<h3 id="devpods">Devpods</h3>
 <p>This is where things get really fascinating! Devpods (e.g., <a href="https://devpod.sh/">DevPod</a> by loft.sh) are reproducible 
 development environments running in remote VMs or Kubernetes clusters, usually configured using 
 <a href="https://containers.dev/implementors/json_reference/">devcontainers.json</a> files. You can think of them as lightweight, 
@@ -480,7 +515,7 @@ using the same <code>devcontainers.json</code> file with the same Docker image
 <p>I won’t lie - it requires some initial effort to set everything up properly, and there are still some rough edges (e.g., 
 latency issues, file synchronization problems, using Git on remote K8s pods, etc.), but the benefits are definitely 
 worth it.</p>
-<h3>GitHub Copilot</h3>
+<h3 id="github-copilot">GitHub Copilot</h3>
 <p>We (already) live in the age of <span class="caps">AI</span>-assisted programming. That’s just a fact. However, all <span class="caps">LLM</span>-based code assistants are 
 just tools, and you have to use them properly to get the best results. In my opinion, simply giving them a concise 
 description of what you want and asking them to write code for you isn’t enough. You have to be more specific, provide 
@@ -508,7 +543,7 @@ how to use some libraries or APIs (pandas, numpy, sklearn, etc.), or for generat
 scripts. I <em>really</em> loved it when I was analyzing some messy data in Jupyter Notebooks, as I completely suck at using 
 matplotlib/seaborn for plotting. It helped me generate the code snippets I needed in seconds - with just my prompts of 
 what I wanted to see on the plots. Awesome!</p>
-<h3>Codex</h3>
+<h3 id="codex">Codex</h3>
 <p>Going further into the <span class="caps">AI</span>-assisted programming world, we have <a href="https://github.com/openai/codex">OpenAI Codex</a>. It is a 
 coding agent from OpenAI that runs locally on your computer and can do stuff that pretty much any other <span class="caps">LLM</span>-based coding 
 agent can do. It still has <strong>0.*</strong> version, so you may expect some rough edges and bugs (boy, how I hated it at the 
@@ -559,15 +594,15 @@ print(c.do_something())  # Output: Doing something! - DFS happens naturally, no 
 </code></pre>
 <p>These are powerful tools. But they’re still tools. You have to use them wisely and remember that “with great power comes 
 great responsibility.”</p>
-<h2>Things that I Rarely Use (but Still Find Useful)</h2>
-<h3>Jupyter</h3>
+<h2 id="things-that-i-rarely-use-but-still-find-useful">Things that I Rarely Use (but Still Find Useful)</h2>
+<h3 id="jupyter">Jupyter</h3>
 <p><a href="https://jupyter.org/">Jupyter Notebooks</a> are super useful for prototyping, data exploration, and analysis. 
 But they’re more of a Data Scientist’s tool rather than an <span class="caps">ML</span> Engineer’s. However, sometimes I do use them for quick 
 experiments, data visualization, or creating baseline models quickly.</p>
 <p>Don’t forget though that Notebooks are still code that someone (including you) may find useful later. So commit them to 
 your repository as well, and try to keep them clean and organized (create a separate folder for them, like “notebooks”, 
 “experiments”, “junk”, etc.). I’ve rarely seen them being properly maintained in production codebases though…</p>
-<h3>Scikit-learn</h3>
+<h3 id="scikit-learn">Scikit-learn</h3>
 <p><a href="https://scikit-learn.org/stable/">Scikit-learn</a> is an amazing library for classical machine learning algorithms. 
 You’ve probably used it a lot during your studies or in your first <span class="caps">ML</span> projects on <a href="https://www.kaggle.com/">Kaggle</a>. 
 However, it’s rarely used in real production systems nowadays. At least, from my personal experience. Many problems 
@@ -587,7 +622,7 @@ data visualization and model evaluation, e.g., plotting calibration curves or fi
 <a href="https://catboost.ai/">CatBoost</a> model into an sklearn-compatible class and using it with libraries like 
 <a href="https://github.com/cleanlab/cleanlab">Cleanlab</a> for dataset quality analysis, or with <a href="https://mlflow.org/">MLflow</a> 
 for model logging.</p>
-<h3>Deep Research</h3>
+<h3 id="deep-research">Deep Research</h3>
 <p>Going back to the <span class="caps">AI</span> hype, I just have to mention Deep Research solutions. There are many of them nowadays; one person 
 might favor OpenAI’s, another might prefer Anthropic’s, Perplexity’s, and so on.</p>
 <p>At their core, they’re just powerful LLMs with tool-calling abilities and a set of pre-defined web-search and data 
@@ -605,8 +640,8 @@ and go through them just to get a better understanding of a topic; now I just go
 several relevant papers and blog posts, and that’s pretty much it).</p>
 <p>The downside is that these solutions are usually paid (at least, the good ones are). Hopefully, either you or your 
 company can afford it.</p>
-<h2>Tools that I Really <span class="caps">DO</span> <span class="caps">NOT</span> Use</h2>
-<h3>Anaconda</h3>
+<h2 id="tools-that-i-really-do-not-use">Tools that I Really <span class="caps">DO</span> <span class="caps">NOT</span> Use</h2>
+<h3 id="anaconda">Anaconda</h3>
 <p><a href="https://www.anaconda.com/">Anaconda</a> is a popular distribution of Python and R for scientific computing and data 
 analysis. It comes with a lot of pre-installed packages and tools, including Jupyter Notebooks, pandas, numpy, and 
 whatever you can imagine. It’s like a specialized environment, with its own package manager, interface, and everything 
@@ -618,7 +653,7 @@ becomes much more complicated. That’s where you turn to more flexible and powe
 <code>kubernetes</code>, and so on.</p>
 <p>It’s probably okay to use it for pure data science projects, but <span class="caps">ML</span> Engineering usually requires more robust and 
 scalable solutions.</p>
-<h3>Debugger</h3>
+<h3 id="debugger">Debugger</h3>
 <p>Everyone who learns programming starts using debuggers on like day one. Breakpoints, step in/out, variable inspection, 
 and so on and so forth. Pretty much every <span class="caps">IDE</span> has a built-in debugger now, and it’s super useful for beginners to 
 understand how code works and why it doesn’t work as expected.</p>
@@ -643,7 +678,7 @@ production systems.</p>
 <p>Don’t get me wrong - debuggers are still super useful for local development and writing small, well-scoped functions. But 
 they may prevent you from thinking through the entire logic and architecture of your code, essentially slowing down your 
 growth as a software engineer.</p>
-<h3>Cursor</h3>
+<h3 id="cursor">Cursor</h3>
 <p><a href="https://cursor.com/">Cursor</a> is another <span class="caps">AI</span>-powered code assistant (<span class="caps">IDE</span>, actually) that helps you write code faster and 
 “better”. I specifically put “better” in quotes, as from my experience it doesn’t really help with code quality or 
 architecture. I’ve seen these thousands of lines of boilerplate <a href="https://en.wikipedia.org/wiki/Spaghetti_code">spaghetti code</a> 
@@ -653,7 +688,7 @@ into even more hardly comprehensible code.</p>
 <p>Again, it’s good for prototyping, implementing one-time scripts, or generating boilerplate code that doesn’t require 
 much thinking. But I wouldn’t recommend it for writing real production-grade systems. At least, not now, not until these 
 models get much better at understanding architecture and improve their perception of code quality.</p>
-<h2>Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 <p>This long-read is just a glimpse into the vast world of tools and technologies that <span class="caps">ML</span> Engineers use daily. I wouldn’t 
 call myself representative of the <span class="caps">ML</span> Engineering community as well, as every engineer has their own preferences and 
 workflows. Image-focused folks or Data Scientists may completely disagree with me on some points, and that’s okay. 

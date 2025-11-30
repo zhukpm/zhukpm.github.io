@@ -79,7 +79,15 @@
 <p>In the <a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">previous post</a>, we built all the necessary 
 mathematics to model player skills as normal distributions. Here we will use all the formulas to implement the 
 optimization algorithm in Python and fit the model to the data (both synthetic and real).</p>
-<h2>General setup</h2>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#general-setup">General setup</a></li>
+<li><a href="#optimization-algorithm">Optimization algorithm</a></li>
+<li><a href="#testing-the-implementation">Testing the implementation</a></li>
+<li><a href="#applying-the-model-to-real-data">Applying the model to real data</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</div>
+<h2 id="general-setup">General setup</h2>
 <p>We will code everything from scratch - this will help us understand the mathematics better and give us more 
 flexibility and fine-grained control over the model. </p>
 <p>As for libraries, we will use only <code>numpy</code> and <code>scipy</code> for numerical computations and access to the <code>norm</code> 
@@ -88,7 +96,7 @@ distribution. And, of course, <code>matplotlib</code> for plotting.</p>
 import numpy as np
 from scipy.stats import norm
 </code></pre>
-<h2>Optimization algorithm</h2>
+<h2 id="optimization-algorithm">Optimization algorithm</h2>
 <p>The algorithm will be an exact copy of what we derived in the previous post. We will start with the optimization 
 function itself, and then implement all the necessary helper functions. We will initialize means and scales (<span class="math">\(\theta\)</span>) 
 with zeros for means and ones for scales, and then use gradient ascent to optimize them.</p>
@@ -215,7 +223,7 @@ def grad_log_likelihood(theta: np.ndarray, dataset: np.ndarray) -&gt; np.ndarray
 <p>The <code>grad_log_likelihood</code> function that calculates the gradient of the log likelihood function for the games dataset.</p>
 </div>
 <p>That’s pretty much it, and we’re ready to test our implementation!</p>
-<h2>Testing the implementation</h2>
+<h2 id="testing-the-implementation">Testing the implementation</h2>
 <p>We will start with a synthetic dataset - a sanity check to ensure that all the mathematics and implementation are 
 correct. We will attribute the players with random means and scales, and then generate a random dataset with game 
 outcomes based on these parameters. So ideally we should be able to recover the original means and scales from the 
@@ -380,7 +388,7 @@ variation. So it looks like we’re ready to move on to the real data. </p>
 Log likelihood - optimized : -0.4403
 </code></pre>
 <p>They are roughly the same, which means that the model is able to fit the data well enough. We’re good to go!</p>
-<h2>Applying the model to real data</h2>
+<h2 id="applying-the-model-to-real-data">Applying the model to real data</h2>
 <p>There were 11 participants in the tournament, and we had to play one against each other to determine the ranking (since 
 I started this project after the tournament). We played “until 2 wins” in a best-of-3 format, and the final table looks 
 like this:</p>
@@ -583,7 +591,7 @@ player on the left will win against the player on the top):</p>
 <div class="caption">
 <p>Winning probabilities for each player against each other.</p>
 </div>
-<h2>Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 <p>This whole exercise was done just out of curiosity and for fun! But I also wanted to show how mathematics and 
 programming can be used to solve real-world problems, and I hope you enjoyed it. Maybe it will even encourage you to 
 try something similar on your own.</p>

@@ -79,7 +79,20 @@ we discussed how to model player skills using normal distributions. Now, let’s
 mathematical details of how we can estimate the parameters of these distributions using Maximum Likelihood Estimation.</p>
 <p><strong>Problem definition:</strong> Having a set of players <span class="math">\(\mathcal{P}\)</span> numbered from <span class="math">\(1\)</span> to <span class="math">\(n\)</span> and a set of game results 
 <span class="math">\(\mathcal{D}\)</span> assign skill levels to each player modeling it with normal distribution.</p>
-<h2>Definitions</h2>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#definitions">Definitions</a><ul>
+<li><a href="#maximum-likelihood-estimation">Maximum Likelihood Estimation</a></li>
+<li><a href="#calculating-gradients">Calculating Gradients</a><ul>
+<li><a href="#partial-derivative-with-respect-to-means">Partial derivative with respect to means</a></li>
+<li><a href="#partial-derivative-with-respect-to-scales">Partial derivative with respect to scales</a></li>
+</ul>
+</li>
+<li><a href="#optimization-algorithm">Optimization algorithm</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="definitions">Definitions</h2>
 <p>First, let’s start with definitions and basic observations.</p>
 <p><strong>Set of players <span class="math">\(\mathcal{P}\)</span></strong></p>
 <p>There are <span class="math">\(n\)</span> players playing in a table tennis tournament. We’ll refer to the set of players as <span class="math">\(\mathcal{P}\)</span>. 
@@ -133,7 +146,7 @@ normal distribution is usually denoted. For general normal distribution we have
 <p><strong>Set of skills <span class="math">\(\mathcal{S}\)</span></strong></p>
 <p>With all mentioned above, we can say that <span class="math">\(\mathcal{S}=\left\{ \mu_i \;|\; i = \overline{1, n} \right\}, \; |\mathcal{S}|= |\mathcal{P}| = n\)</span>, 
 a set of <em>mean</em> skills of players. Finding <span class="math">\(\mathcal{S}\)</span> is essentially the goal of the whole process.</p>
-<h3>Maximum Likelihood Estimation</h3>
+<h3 id="maximum-likelihood-estimation">Maximum Likelihood Estimation</h3>
 <p>We will approach the problem with the <a href="https://en.wikipedia.org/wiki/Maximum_likelihood_estimation" target="_blank">Maximum Likelihood Estimation (<span class="caps">MLE</span>)</a> 
 method. There’s a lot of math behind it, but essentially it works as follows:</p>
 <ol>
@@ -190,7 +203,7 @@ point, and so on.</p>
 <div class="caption">
 <p>Gradient descent, as seen by ChatGPT</p>
 </div>
-<h3>Calculating Gradients</h3>
+<h3 id="calculating-gradients">Calculating Gradients</h3>
 <p>Here will be a lot of math equations, so we’ll start with some notations and observations to make everything a bit 
 easier to read. First, for standard normal distribution, we have:</p>
 <div class="math">\begin{equation*}
@@ -226,7 +239,7 @@ and it makes the math a bit easier.</p>
     \end{pmatrix}
 \end{equation}</div>
 <p>Let’s calculate partial derivatives with respect to <span class="math">\(\mu_i\)</span> and <span class="math">\(\sigma_i\)</span>, and see what happens.</p>
-<h4>Partial derivative with respect to means</h4>
+<h4 id="partial-derivative-with-respect-to-means">Partial derivative with respect to means</h4>
 <div class="math">\begin{equation}
     \begin{split}
         &amp; \frac{\partial}{\partial \mu_i} \log {\mathcal{L}\left(\,\theta \; ; \; \mathcal{D} \,\right)} = \frac{\partial}{\partial \mu_i} \sum_{k=1}^{m}{\log{\left(1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)\right)}} = \\
@@ -251,7 +264,7 @@ between taking gradients with respect to <span class="math">\(\mu_{p^k_1}\)</sp
     \end{split}
 \end{equation}</div>
 <p>Looks terrifying, but it’ll be much easier to read in the code (a lot of that is already implemented in the <code>numpy</code> library).</p>
-<h4>Partial derivative with respect to scales</h4>
+<h4 id="partial-derivative-with-respect-to-scales">Partial derivative with respect to scales</h4>
 <div class="math">\begin{equation}\label{eq:gradsig:all}
     \begin{split}
         &amp; \frac{\partial}{\partial \sigma_i} \log {\mathcal{L}\left(\,\theta \; | \; \mathcal{D} \,\right)} = \frac{\partial}{\partial \sigma_i} \sum_{k=1}^{m}{\log{\left(1-\Phi\left(-\frac{\mu_{\theta,\, p_1^k}-\mu_{\theta,\,p_2^k}}{\sqrt{\sigma_{\theta,\,p_1^k}^2+\sigma_{\theta,\,p_2^k}^2}}\right)\right)}} = \\
@@ -305,7 +318,7 @@ around (e.g., <span class="math">\(p_i\)</span> lost to <span class="math">\(p
 meaning that “we found an unexpected case, and want to account for it by broadening the possible skills of player <span class="math">\(p_i\)</span>”.</p>
 <p>Another interesting thing is that there are many multipliers appearing repeatedly in these equations, and it makes the 
 whole implementation much easier from a programming perspective.</p>
-<h3>Optimization algorithm</h3>
+<h3 id="optimization-algorithm">Optimization algorithm</h3>
 <p>It was already described above, but let’s recap it in a more formal manner:</p>
 <ol>
 <li>Given a set of players <span class="math">\(\mathcal{P}\)</span>, games dataset <span class="math">\(\mathcal{D}\)</span>, <a href="https://en.wikipedia.org/wiki/Learning_rate">learning rate</a> <span class="math">\(\alpha\)</span>, maximum number of optimization steps <span class="math">\(\text{max_iterations}\)</span>:</li>

@@ -77,7 +77,16 @@ expect a lot of reflections, learnings, and maybe even failures along the way. L
 <div class="caption">
 <p>Something about country comparison and data analysis</p>
 </div>
-<h2>The Idea</h2>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#the-idea">The Idea</a></li>
+<li><a href="#criteria">Criteria</a></li>
+<li><a href="#importance-of-criteria">Importance of Criteria</a></li>
+<li><a href="#data-collection">Data Collection</a></li>
+<li><a href="#caveats">Caveats</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul>
+</div>
+<h2 id="the-idea">The Idea</h2>
 <blockquote>
 <p>Given a set of criteria that matter to you, get a ranked list of countries that best match your preferences for living, working, or traveling.</p>
 </blockquote>
@@ -88,7 +97,7 @@ expect a lot of reflections, learnings, and maybe even failures along the way. L
 <li>To get a ranked list, we need to gather data for all countries and criteria, which can be extremely challenging in some cases.</li>
 </ol>
 <p>Let’s try to address these questions one by one.</p>
-<h2>Criteria</h2>
+<h2 id="criteria">Criteria</h2>
 <p>When thinking about criteria for comparing countries, several aspects may immediately come to mind. Here are several examples:</p>
 <ul>
 <li><span class="dquo">“</span>I want to live in a warm country by the ocean.”</li>
@@ -163,14 +172,14 @@ expect a lot of reflections, learnings, and maybe even failures along the way. L
 </table>
 <p>That’s a good starting point. However, it already seems quite impossible to find a country that would score highly on 
 all these criteria. That’s why we need to consider personal preferences as well.</p>
-<h2>Importance of Criteria</h2>
+<h2 id="importance-of-criteria">Importance of Criteria</h2>
 <p>I will use the most straightforward approach here: let the user assign weights to each criterion based on its importance. 
 The total country score can then be calculated as a weighted sum of individual criterion scores:</p>
 <div class="math">$$ score(Country) = \frac{\sum_{C \in Criteria} w_C \times score(C, Country)}{\sum_{C \in Criteria} w_C } $$</div>
 <p>Each <span class="math">\(score(Criterion, Country)\)</span> will be a value between <span class="math">\(0\)</span> and <span class="math">\(1\)</span> showing how well the country performs on that 
 criterion. That way the final country score will also be between <span class="math">\(0\)</span> and <span class="math">\(1\)</span>, where <span class="math">\(1\)</span> means the country is perfect on 
 all criteria.</p>
-<h2>Data Collection</h2>
+<h2 id="data-collection">Data Collection</h2>
 <p>That’s going to be the most challenging part. For each criterion, we will gather a set of <em>metrics</em> or <em>indicators</em> 
 that can be used to evaluate how well a country performs on that criterion. For example, for the “Climate and 
 Environment” we’ll have metrics like average summer/winter temperature, average annual rainfall, air quality index, 
@@ -181,7 +190,7 @@ only for a handful of countries. I will try to use indicators that are available
 missing data for some countries, I will try to find alternative sources and, if necessary, use imputation techniques to 
 fill in the gaps. For instance, average summer temperature can be estimated based on the country’s latitude, elevation, 
 proximity to the ocean, and temperatures of neighboring countries. That’s where we’ll use some Machine Learning :)</p>
-<h2>Caveats</h2>
+<h2 id="caveats">Caveats</h2>
 <p>The whole idea has several caveats that I’d like to acknowledge upfront:</p>
 <ul>
 <li>The criteria and their importance are highly subjective. I defined a set of criteria based on my personal preferences; 
@@ -194,7 +203,7 @@ proximity to the ocean, and temperatures of neighboring countries. That’s wher
     safety overall, but certain cities or regions may have higher crime rates. You just can’t assign a single score to 
     a whole country like the <span class="caps">US</span>, China, or Russia. But that’s a price I’m willing to pay for the sake of simplicity!</li>
 </ul>
-<h2>Next Steps</h2>
+<h2 id="next-steps">Next Steps</h2>
 <p>I’ll start with the crucial part of the whole service: data collection and analysis. In the next few posts, I will 
 define metrics for each criterion, find data sources, gather the data, and come up with imputation and transformation 
 techniques to make the data usable for country scoring.</p>

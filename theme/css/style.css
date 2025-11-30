@@ -508,3 +508,62 @@ tr:nth-child(even) {
 		margin-right: 0;
 	}
 }
+
+/* Solution for: Make the Table of Contents stand out from article body */
+.toc {
+  margin: 1.5rem 0;
+  padding: 0;
+}
+
+/* Title styling */
+.toc > .toctitle {
+  display: block;
+  margin: 0 0 0.25rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+/* TOC box (the <ul> that follows the title) */
+.toc > .toctitle + ul {
+  margin: 0 0 2rem;
+  padding: 0.75rem 1rem 0.75rem 1.25rem;
+  border: 1px solid lightgray;
+  border-left: 3px solid #1F3683;       /* reuse your blockquote accent color */
+  background-color: #fcfcfc;            /* in line with your code blocks */
+  border-radius: 4px;
+  font-size: 1.05rem;
+  list-style: none;                     /* custom bullets below */
+}
+
+/* Compact, readable list items */
+.toc > .toctitle + ul li {
+  /*margin: 0.15rem 0;*/
+}
+
+/* Subtle custom bullet for links */
+.toc > .toctitle + ul li::before {
+  margin-right: 0.4em;
+}
+
+.toc > .toctitle + ul li::marker {
+  color: #326DCE;                       /* your link color */
+}
+
+/* Links inside TOC: emphasize on hover */
+.toc > .toctitle + ul a {
+  text-decoration: none;
+}
+
+.toc > .toctitle + ul a:hover,
+.toc > .toctitle + ul a:focus {
+  text-decoration: underline;
+}
+
+/* Optional: slightly reduce padding on very small screens */
+@media (max-width: 50em) {
+  .toc > .toctitle + ul {
+    padding: 0.6rem 0.75rem 0.6rem 1rem;
+  }
+}

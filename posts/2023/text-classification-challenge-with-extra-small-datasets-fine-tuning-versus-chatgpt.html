@@ -72,7 +72,16 @@
 <p>The Toloka <span class="caps">ML</span> team continually researches and compares different approaches to text classification under various conditions. Here we present another one of our experiments on the performance of <span class="caps">NLP</span> models when trained on extra-small datasets.</p>
 <p>Previously, we provided a <a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">brief overview of potential solutions</a> and <a href="https://www.kdnuggets.com/2023/04/best-architecture-text-classification-task-benchmarking-options.html" target="_blank">compared classical models with large language models (LLMs)</a> for a specific text classification task. However, those comparisons were based on a “regular” dataset that contained enough data points to build a reliable classifier. In real-world scenarios, you may encounter situations where limited data is available or human labeling hasn’t been carried out.</p>
 <p>Intuitively, LLMs such as <span class="caps">GPT</span>-3 or ChatGPT might outperform smaller models due to their extensive “knowledge”. To investigate this hypothesis, we created an artificially small dataset by extracting a portion of a larger one and compared several approaches. We fine-tuned the RoBERTa base model, employed ChatGPT for few-shot classification, and fine-tuned the <span class="caps">GPT</span>-3 Babbage model.</p>
-<h2>The dataset</h2>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#the-dataset">The dataset</a></li>
+<li><a href="#regular-fine-tuning-with-roberta">Regular fine-tuning with RoBERTa</a></li>
+<li><a href="#few-shot-with-chatgpt">Few-shot with ChatGPT</a></li>
+<li><a href="#fine-tuning-a-gpt-3-model">Fine-tuning a <span class="caps">GPT</span>-3 model</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#sources">Sources</a></li>
+</ul>
+</div>
+<h2 id="the-dataset">The dataset</h2>
 <p>To evaluate the comprehension capabilities of various models, we selected a multiclass dataset consisting of scientific article abstracts. The task was to determine each article’s domain.</p>
 <p>We opted for the <a href="https://data.mendeley.com/datasets/9rw3vkcfy4/6"><span class="caps">WOS</span>-11967</a> dataset, which contains 11,967 documents with 35 categories that include seven parent categories: medical, psychology, computer science, biochemistry, electrical engineering, civil sciences, and mechanical engineering. We sampled 10,000 data points and focused solely on the parent categories for our analysis.</p>
 <p>While the dataset was not perfectly balanced, the class distribution was reasonably proportional. Therefore, satisfactory results could potentially be achieved across all classes. The class distribution is illustrated below.</p>
@@ -83,13 +92,13 @@
 <p>Upon manual analysis, we found that determining the domain of some abstracts was relatively straightforward, while in other cases, the task became more challenging. For instance, computer science articles may discuss mathematical topics, or psychology articles might contain medical or biochemical terms and abbreviations, making it difficult to distinguish them from biochemistry or medical domains. The abstracts also varied significantly in length, with a mean of 274 tokens (ChatGPT tokens) and a standard deviation of 115 tokens.</p>
 <p>To simulate scenarios involving extra-small datasets, we performed a train-test split on the corpora and allocated a small number of samples to the training set. We repeated this process three times with different training set sizes to evaluate any changes in performance in the models based on the available training data. We created three splits for our experiment: <span class="caps">WOS</span>-11967-s200 (200 samples in the training set, 9,800 samples in the test set), <span class="caps">WOS</span>-11967-s500 (500 / 9,500), and <span class="caps">WOS</span>-11967-s2000 (2,000 / 8,000).</p>
 <p>Now, let’s take a look at the results obtained using different models to tackle these problems.</p>
-<h2>Regular fine-tuning with RoBERTa</h2>
+<h2 id="regular-fine-tuning-with-roberta">Regular fine-tuning with RoBERTa</h2>
 <p>For our baseline, we selected the <a href="https://huggingface.co/roberta-base">RoBERTa base</a> model and fine-tuned it on the three datasets mentioned earlier. We used the same hyperparameter configuration for each run (a batch size of 32, a learning rate of 3e-5, a linear scheduler with warmup, and a 256-token window), along with early stopping to prevent overfitting.</p>
 <p>We obtained the following results:</p>
 <p><img alt="Fine-tuning results for RoBERTa" class="image-process-article-image" src="https://vzhukov.dev/images/001/derivatives/article-image/ft-results.png"/></p>
 <p>The data shows that 200 samples are insufficient when it comes to extracting all the necessary patterns and information required to accurately classify the abstracts. The lower macro-average F1 score also indicates that the model underperforms on under-represented classes like mechanical engineering. This suggests that it’s not enough to have only a few samples from a particular class.</p>
 <p>As expected, the model’s performance improved as the amount of available data increased – ultimately resulting in robust performance for multiclass classification across seven classes.</p>
-<h2>Few-shot with ChatGPT</h2>
+<h2 id="few-shot-with-chatgpt">Few-shot with ChatGPT</h2>
 <p>The second approach we explored was few-shot classification using ChatGPT. This method differs significantly from traditional classification as it doesn’t involve training a model per se. Instead, we engineered the input prompt to achieve optimal performance.</p>
 <p>However, it was impossible to feed all 200 samples into the model due to its 4096-token context size limit. Given the measurements above, we could only present around 14 abstracts to the model. That number was further reduced when considering the tokens used for instructions and delimiters.</p>
 <p>Initially, we employed the “system” role for instructions and provided a single example per class to guide the model’s response. We simplified the class names to single tokens while retaining their meaning. This made it easier for the model to select the appropriate category and limit the output to a single token. For instance, “Biochemistry” became “Bio,” and “Computer Science” became “Computer.” Additionally, we restricted the number of tokens generated by providing a list of classes to choose from and instructing the model to return the “Unknown” token if it was unsure about the category.</p>
@@ -116,15 +125,15 @@
 <p><img alt="ChatGPT Results" class="image-process-article-image" src="https://vzhukov.dev/images/001/derivatives/article-image/chatgpt-results.png"/></p>
 <p>The performance was notably better than fine-tuning a RoBERTa model on 200 samples – and fewer samples were required. However, as the availability of labeled data increased, RoBERTa began to outperform this approach, even with just 500 samples.</p>
 <p>We believe that further performance improvements are possible through proper prompt engineering. Some useful tips and tricks can be found in the <a href="https://www.promptingguide.ai/">Prompting Guide</a>.</p>
-<h2>Fine-tuning a <span class="caps">GPT</span>-3 model</h2>
+<h2 id="fine-tuning-a-gpt-3-model">Fine-tuning a <span class="caps">GPT</span>-3 model</h2>
 <p>For our final approach, we fine-tuned the <span class="caps">GPT</span>-3 Babbage model on these three datasets. We followed the dataset preparation recommendations outlined in the <a href="https://platform.openai.com/docs/guides/model-optimization">OpenAI guide</a> and opted for the default hyperparameters without making any specific adjustments. The training process for each dataset took about 20 minutes, yielding the following results:</p>
 <p><img alt="GPT-3 Results" class="image-process-article-image" src="https://vzhukov.dev/images/001/derivatives/article-image/gpt3-results.png"/></p>
 <p>The fine-tuned <span class="caps">GPT</span>-3 model delivered impressive results even on the smallest dataset, surpassing both RoBERTa and ChatGPT. As the amount of training data increased, the performance gap between RoBERTa and the tuned <span class="caps">GPT</span>-3 model narrowed. This raised questions about the resources and feasibility of using either option. We discussed the pros and cons of both approaches in our <a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">previous articles</a>.</p>
-<h2>Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 <p>This experiment demonstrates that our initial hypothesis was correct – larger models trained on more extensive data perform significantly better on extra-small datasets. With proper prompt engineering and few-shot techniques, it’s possible to achieve favorable results.</p>
 <p>However, differences in performance decrease as the dataset size increases. Moreover, an appropriately tailored classical model, such as a domain-adapted RoBERTa model, can sometimes outperform generic LLMs in classification tasks. It can be attributed to the model’s specialized “knowledge” of the subject matter. Furthermore, with the right optimizations, inference using these models can be significantly faster, which is crucial when developing online services.</p>
 <p>All images unless otherwise noted are by the author.</p>
-<h2>Sources</h2>
+<h2 id="sources">Sources</h2>
 <ol>
 <li>Kowsari K, Brown <span class="caps">DE</span>, Heidarysafa M, Jafari Meimandi K, Gerber <span class="caps">MS</span>, Barnes <span class="caps">LE</span>. HDLTex: Hierarchical Deep Learning for Text Classification. In: <em>Machine Learning and Applications (<span class="caps">ICMLA</span>), 2017 16th <span class="caps">IEEE</span> International Conference On</em>. <span class="caps">IEEE</span>; 2017.</li>
 <li>Liu Y, Ott M, Goyal N, et al. RoBERTa: A Robustly Optimized <span class="caps">BERT</span> Pretraining Approach. <em>CoRR</em>. 2019;abs/1907.11692. <a href="http://arxiv.org/abs/1907.11692">http://arxiv.org/abs/1907.11692</a></li>
