@@ -85,12 +85,27 @@ a:visited {
 	text-decoration: none;
 }
 
-#banner > h1 > a {
-	color: #000;
+/* Solution for: Keep the site title visual while avoiding multiple <h1> on article pages */
+/* Style parity: whether the banner uses <h1> or a non-heading .site-title, it looks the same */
+#banner .site-name {
+  font-size: 2em;              /* mirrors typical <h1> size */
+  line-height: 1.5em;          /* match your current banner rule */
+  margin: 0.67em 0;            /* mimic default <h1> vertical spacing */
+  font-weight: 700;
 }
 
-#banner > h1 {
-	line-height: 1.5em;
+/* Link inside the site title */
+#banner .site-name > a {
+  color: #000;
+  text-decoration: none;
+}
+
+/* Optional: slightly scale down on small screens */
+@media (max-width: 50em) {
+  #banner .site-name {
+    font-size: 1.75em;
+    margin: 0.5em 0;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
