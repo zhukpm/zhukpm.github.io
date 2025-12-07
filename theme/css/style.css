@@ -582,3 +582,11 @@ tr:nth-child(even) {
     padding: 0.6rem 0.75rem 0.6rem 1rem;
   }
 }
+
+/* Solution for: Distinguish the category page heading and separate it from the posts list */
+/* Add a clean visual break before the list so the header doesn't "merge" with it */
+#content > header.index-header {
+	margin-top: 0.75rem;
+	margin-bottom: 2.75rem;
+	border-bottom: 1px solid #e2e2e2;
+}
