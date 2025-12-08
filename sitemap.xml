@@ -6,7 +6,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://vzhukov.dev</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -27,14 +27,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://vzhukov.dev/posts</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/2023</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -55,7 +55,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://vzhukov.dev/posts/2025</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -104,210 +104,210 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://vzhukov.dev/posts/categories</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/category/ai-ml-based-applications</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/category/machine-learning</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/category/math</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/category/natural-language-processing</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/category/software-engineering</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/algorithms</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/chatgpt</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/country-comparison</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/data-collection</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/data-science</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/data-structures</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/devops</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/gpt</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/gradient-descent</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/leetcode</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/llms</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/machine-learning</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/mathematical-modeling</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/maximum-likelihood-estimation</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/mlops</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/nlp</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/normal-distribution</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/player-ranking</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/python</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/roberta</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/table-tennis</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/text-classification</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tag/tools</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://vzhukov.dev/posts/tags</loc>
-<lastmod>2025-12-07T16:23:09-00:00</lastmod>
+<lastmod>2025-12-08T01:07:58-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
