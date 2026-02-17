@@ -23,7 +23,7 @@
 <meta content="article" property="og:type"/>
 <meta content="Few-Shot Techniques for Text Classification Using LLMs - Viacheslav Zhukov" property="og:title"/>
 <meta content="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms" property="og:url"/>
-<meta content="2026-02-16T11:30:00+01:00" property="article:published_time"/>
+<meta content="2026-02-17T21:30:00+01:00" property="article:published_time"/>
 <meta content="Viacheslav Zhukov" property="article:author"/>
 <meta content="Machine Learning" property="article:section"/>
 <meta content="Exploring and comparing different few-shot example selection strategies for text classification with LLMs - from random sampling and k-nearest neighbors to diversity-based methods like k-medoids and Determinantal Point Processes." name="description"/>
@@ -55,11 +55,11 @@
 		"@type": "PeopleAudience",
 		"audienceType": "software developers"
 	  },
-      "wordCount": 4517,
+      "wordCount": 4516,
 	  "keywords": "few-shot learning, text classification, LLMs, few-shot prompting, k-nearest neighbors, Determinantal Point Processes, k-medoids, in-context learning, GPT, NLP, structured decoding, example selection",
 	  "inLanguage": "en",
-	  "datePublished": "2026-02-16T11:30:00+0100",
-	  "dateModified": "2026-02-16T13:00:00+0100",
+	  "datePublished": "2026-02-17T21:30:00+0100",
+	  "dateModified": "2026-02-17T21:45:00+0100",
 	  "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
 	  "url": "https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms",
 	  "isAccessibleForFree": true,
@@ -658,7 +658,7 @@ following approach:</p>
 \end{matrix}\right)
 \end{split}
 $$</div>
-<p><span class="math">\(p\)</span> is a vector of weights that we will optimize on the validation set, and <span class="math">\(f^i\)</span> is a vector of features for example <span class="math">\(i\)</span>.
+<p><span class="math">\(p\)</span> is a vector of weights that we will optimize on the validation set, and <span class="math">\(f_i\)</span> is a vector of features for example <span class="math">\(i\)</span>.
 Entropy is calculated the same way as in the “hardest” selection. Consistency is the fraction of examples in the
 vicinity of example <span class="math">\(i\)</span> that belong to the same class as <span class="math">\(i\)</span> (<span class="math">\(k_c\)</span>-nearest neighbors). Density is the inverse of the 
 average distance from example <span class="math">\(i\)</span> to other examples in its vicinity (<span class="math">\(k_d\)</span>-nearest neighbors).</p>
@@ -848,7 +848,7 @@ vary depending on the dataset, the model, and the specific implementation detai
 </section>
 <footer class="post-info">
     Written by Viacheslav Zhukov in <a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning</a> on
-    <time class="published" datetime="2026-02-16T11:30:00+01:00">        16th
+    <time class="published" datetime="2026-02-17T21:30:00+01:00">        17th
 February 2026
     </time>
 </footer>
