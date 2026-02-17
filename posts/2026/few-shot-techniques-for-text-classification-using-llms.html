@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Few-Shot Techniques for Text Classification Using LLMs</title>
+<meta charset="utf-8"/>
+<meta content="Viacheslav Zhukov" property="og:site_name"/>
+<meta content="few-shot learning, text classification, LLMs, few-shot prompting, k-nearest neighbors, Determinantal Point Processes, k-medoids, in-context learning, GPT, NLP, structured decoding, example selection" name="keywords"/>
+<meta content="article" property="og:type"/>
+<meta content="Few-Shot Techniques for Text Classification Using LLMs - Viacheslav Zhukov" property="og:title"/>
+<meta content="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms" property="og:url"/>
+<meta content="2026-02-16T11:30:00+01:00" property="article:published_time"/>
+<meta content="Viacheslav Zhukov" property="article:author"/>
+<meta content="Machine Learning" property="article:section"/>
+<meta content="Exploring and comparing different few-shot example selection strategies for text classification with LLMs - from random sampling and k-nearest neighbors to diversity-based methods like k-medoids and Determinantal Point Processes." name="description"/>
+<meta content="Exploring and comparing different few-shot example selection strategies for text classification with LLMs - from random sampling and k-nearest neighbors to diversity-based methods like k-medoids and Determinantal Point Processes." property="og:description"/>
+<meta content="LLMs" name="tags"/>
+<meta content="LLMs" property="article:tag"/>
+<meta content="Machine Learning" name="tags"/>
+<meta content="Machine Learning" property="article:tag"/>
+<meta content="NLP" name="tags"/>
+<meta content="NLP" property="article:tag"/>
+<meta content="Python" name="tags"/>
+<meta content="Python" property="article:tag"/>
+<meta content="Text Classification" name="tags"/>
+<meta content="Text Classification" property="article:tag"/>
+<meta content="https://vzhukov.dev/images/010/thumb.png" property="og:image"/>
+<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@type": "BlogPosting",
+	  "mainEntityOfPage": {
+		"@type": "WebPage",
+		"@id": "https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms"
+	  },
+	  "headline": "Few-Shot Techniques for Text Classification Using\u00a0LLMs",
+	  "name": "Few-Shot Techniques for Text Classification Using\u00a0LLMs",
+	  "description": "Exploring and comparing different few-shot example selection strategies for text classification with LLMs - from random sampling and k-nearest neighbors to diversity-based methods like k-medoids and Determinantal Point\u00a0Processes.",
+	  "articleSection": "Machine Learning",
+      "audience": {
+		"@type": "PeopleAudience",
+		"audienceType": "software developers"
+	  },
+      "wordCount": 4517,
+	  "keywords": "few-shot learning, text classification, LLMs, few-shot prompting, k-nearest neighbors, Determinantal Point Processes, k-medoids, in-context learning, GPT, NLP, structured decoding, example selection",
+	  "inLanguage": "en",
+	  "datePublished": "2026-02-16T11:30:00+0100",
+	  "dateModified": "2026-02-16T13:00:00+0100",
+	  "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+	  "url": "https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms",
+	  "isAccessibleForFree": true,
+	  "author": {
+		"@type": "Person",
+		"name": "Viacheslav Zhukov",
+	    "url": "https://vzhukov.dev"
+	  },
+	  "publisher": {
+		"@type": "Person",
+		"name": "Viacheslav Zhukov",
+	    "url": "https://vzhukov.dev"
+	  },
+	  "image": {
+		"@type": "ImageObject",
+		"url": "https://vzhukov.dev/images/010/thumb.png"
+	  }	}
+	</script>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="icon"/>
+<link href="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://vzhukov.dev"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://vzhukov.dev/posts"}, {"@type": "ListItem", "position": 3, "name": "2026", "item": "https://vzhukov.dev/posts/2026"}, {"@type": "ListItem", "position": 4, "name": "Few shot techniques for text classification using llms", "item": "https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms"}]}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<div class="site-name"><a href="https://vzhukov.dev/">Viacheslav Zhukov</a></div>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://vzhukov.dev/javascript-memes">Javascript Memes</a></li>
+<li><a href="https://vzhukov.dev/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms" rel="bookmark" title="Permalink to Few-Shot Techniques for Text Classification Using LLMs">Few-Shot Techniques for Text Classification Using LLMs</a>
+</h1>
+</header>
+<section class="entry-content key-text-content">
+<p><img alt="Few-Shot Text Classification" class="image-process-crisp" src="https://vzhukov.dev/images/010/derivatives/crisp/1x/thumb.png" srcset="https://vzhukov.dev/images/010/derivatives/crisp/1x/thumb.png 1x, https://vzhukov.dev/images/010/derivatives/crisp/2x/thumb.png 2x, https://vzhukov.dev/images/010/derivatives/crisp/4x/thumb.png 4x"/></p>
+<div class="caption">
+<p>Credit goes to <a href="https://tendem.ai/">Tendem</a> - the hybrid <span class="caps">AI</span>+Human agent that I develop myself :)</p>
+</div>
+<p>Text classification is one of the most common tasks in natural language processing. It is used to categorize reviews by 
+sentiment, classify user queries by intent, sort documents by topic, and much more. There are numerous approaches to 
+solving this problem, from traditional keyword-based methods to deep learning models that leverage semantic understanding
+(transformers and the whole family of LLMs). </p>
+<p>Another approach that became popular with the widespread use of LLMs is the <strong>few-shot technique</strong>. The idea is quite 
+simple: let’s take a description of the task, a couple of examples, show it all to the model, and ask it to classify 
+the new input. This approach has many advantages compared to traditional methods: </p>
+<ol>
+<li>It is <strong>very easy</strong> to implement. You don’t need to train anything - just grab an <span class="caps">LLM</span>’s <span class="caps">API</span>, write a prompt, and you’re done. It lowers the entry barrier significantly, so non-<span class="caps">ML</span> engineers (or even non-engineers altogether) can use it to solve their problems.</li>
+<li>It is <strong>very flexible</strong>. To solve a different problem you can use the same model and only change the prompt and the examples.</li>
+<li>It is <strong>very powerful</strong>. LLMs are trained on a huge amount of data, so they already know a lot about the world - what certain words and phrases mean, how they relate to each other, and so on.</li>
+<li>It is <strong>very data-efficient</strong>. You don’t need to collect and label a large dataset to train a model (as we used to do before) - just a few examples and a good explanation of the task are enough to get <em>good</em> results.</li>
+</ol>
+<p>Few-shot classification became possible thanks to so-called “<em>in-context learning</em>” - the ability of LLMs to learn not 
+only from the training data they were initially trained on, but also from the input they receive at inference time. You 
+can provide the model with a description of the task, a couple of examples of how to solve it, and then simply ask it to 
+do the same for a new input.</p>
+<p>In this article I will study (and somewhat compare) different few-shot techniques for text classification using LLMs (as 
+there are different ways to “select” the “best” examples to show to the model; and yes, it <em>does</em> affect the performance).
+I will also outline some advantages and disadvantages of each approach, and write a small guide on when to use which one.</p>
+<blockquote>
+<p>Few-shot classification is not a silver bullet. It is really a good starting point, a solid baseline to improve a model’s 
+performance further. But if you want to get the best results, the best inference-time performance, or just want to have 
+more control over the model’s behavior, you will <em>most likely</em> need to train a custom model with all the hustle that 
+comes with it.</p>
+</blockquote>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#the-problem-scientific-paper-classification">The problem - scientific paper classification</a></li>
+<li><a href="#the-model-design-prompting-and-inference">The model design - prompting and inference</a></li>
+<li><a href="#metrics">Metrics</a></li>
+<li><a href="#few-shot-techniques">Few-shot techniques</a><ul>
+<li><a href="#zero-shot-prompting">Zero-shot prompting</a></li>
+<li><a href="#random-few-shot-selection">Random few-shot selection</a></li>
+<li><a href="#k-nearest-neighbors-few-shot-selection">K-nearest neighbors few-shot selection</a></li>
+<li><a href="#hardest-few-shot-selection"><span class="dquo">“</span>Hardest” few-shot selection</a></li>
+<li><a href="#diversity-based-few-shot-selection">Diversity-based few-shot selection</a><ul>
+<li><a href="#k-medoids-selection">K-Medoids selection</a></li>
+<li><a href="#determinantal-point-processes">Determinantal Point Processes</a></li>
+</ul>
+</li>
+<li><a href="#importance-based-few-shot-selection">Importance-based few-shot selection</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</div>
+<h2 id="the-problem-scientific-paper-classification">The problem - scientific paper classification</h2>
+<p>For the sake of simplicity (and because I already have a dataset for this, and I don’t want to waste a lot of inference 
+time and money on this experiment), I will use a dataset of scientific papers that I collected a while ago -
+<a href="https://data.mendeley.com/datasets/9rw3vkcfy4/6"><span class="caps">WOS</span>-11967</a>. I already used it in the article about <a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">text classification on extra-small datasets</a>, 
+but here the problem will be a bit different. I will use paper <strong>keywords</strong> to classify articles into 35 <strong>scientific areas</strong> from 7 different domains (5 areas per domain). 
+So, the task is to predict the area of a scientific paper based on its keywords.</p>
+<p>Again, for the sake of simplicity and demonstration, I will use a balanced split of the dataset:</p>
+<table>
+<thead>
+<tr>
+<th>Split</th>
+<th># of domains</th>
+<th># of areas per domain</th>
+<th># of examples per area</th>
+<th>Total examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Train</td>
+<td>7</td>
+<td>5</td>
+<td>20</td>
+<td>700</td>
+</tr>
+<tr>
+<td>Val</td>
+<td>7</td>
+<td>5</td>
+<td>10</td>
+<td>350</td>
+</tr>
+<tr>
+<td>Test</td>
+<td>7</td>
+<td>5</td>
+<td>50</td>
+<td>1750</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td>7</td>
+<td>5</td>
+<td>80</td>
+<td><strong>2800</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The Train split will be used to select the few-shot examples, the Val split - to <em>potentially optimize the shots</em> in one way 
+or another, and the Test split - to evaluate the final performance of the model.
+Here’s a small sample of the dataset just to give you an idea of what it looks like:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Keywords</th>
+<th style="text-align: left;">Scientific Area</th>
+<th style="text-align: left;">Domain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">growth; tyrosine kinase inhibitors; resistant; Philadelphia-positive acute lymphoblastic leukemia; mechanism; bone marrow stromal cells</td>
+<td style="text-align: left;">polymerase chain reaction</td>
+<td style="text-align: left;">biochemistry</td>
+</tr>
+<tr>
+<td style="text-align: left;">Qualitative research; rigour; trustworthiness; impact evaluation; evidence-based policy</td>
+<td style="text-align: left;">attention</td>
+<td style="text-align: left;">Psychology</td>
+</tr>
+<tr>
+<td style="text-align: left;">e-learning; educational resources; sequencing; interoperability</td>
+<td style="text-align: left;">computer programming</td>
+<td style="text-align: left;"><span class="caps">CS</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Monte Carlo; Depletion; Thermal-hydraulics; Coupling; Sub-step; BGCore</td>
+<td style="text-align: left;">hydraulics</td>
+<td style="text-align: left;"><span class="caps">MAE</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Agile; Scrum; Web Engineering; <span class="caps">CMMI</span>; Software Engineering</td>
+<td style="text-align: left;">software engineering</td>
+<td style="text-align: left;"><span class="caps">CS</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-model-design-prompting-and-inference">The model design - prompting and inference</h2>
+<p>For all methods that I will explore here, I will use the same design and model, and only tweak the way I select the few-shot examples.
+Model: <a href="https://developers.openai.com/api/docs/models/gpt-5-nano"><span class="caps">GPT</span>-5-Nano</a>. It’s the fastest, cheapest 
+version of <span class="caps">GPT</span>-5, and yet it’s quite capable for text classification tasks.
+Inference design: </p>
+<ul>
+<li>I will use the same system prompt for all methods, which briefly describes the task and the available classes (scientific areas).</li>
+<li>Each few-shot example will consist of two conversation turns: the first one will be the user turn with the keywords of a paper, and the second one will be the assistant turn with the correct scientific area.</li>
+<li>Assistant turns are subject to <a href="https://developers.openai.com/api/docs/guides/structured-outputs/"><strong>structured decoding</strong></a>, meaning that I will define a strict <span class="caps">JSON</span> format for the model’s output, and it will be forced to follow it. </li>
+</ul>
+<p>The format of this <span class="caps">JSON</span> will be the following:</p>
+<pre><code class="language-json">{
+  "scientific_area": "the predicted scientific area, choice restricted to the 35 available areas"
+}
+</code></pre>
+<p>So the overall conversation will look like this:</p>
+<pre><code class="language-json">[
+  {"role": "system", "content": "&lt;system prompt&gt;"},
+  {"role": "user", "content": "Classify the following set of keywords: &lt;keywords of the paper&gt;"},
+  {"role": "assistant", "content": "{\"scientific_area\": \"&lt;the correct scientific area&gt;\"}"},
+  ...
+  {"role": "user", "content": "Classify the following set of keywords: &lt;keywords of the INPUT paper to classify&gt;"}
+]
+</code></pre>
+<p>Structured decoding prevents models from hallucinating non-existent classes and makes the output more consistent and easier to parse.</p>
+<blockquote>
+<p>Note that there are different ways of “providing” few-shots to the model and generating outputs. For example, one can 
+simply put all the few-shots into the system prompt or even into the first user turn. Outputs can be plain text as well 
+(since it’s also possible to restrict them with regular expressions, for instance). 
+I prefer the design described above, as it’s easier to maintain using pydantic schemas, and it’s more straightforward 
+for the model from a behavioral perspective: the user gives an input, the assistant gives an output, and so on, so the model 
+aligns better with the task given the “previous” behavior.</p>
+</blockquote>
+<h2 id="metrics">Metrics</h2>
+<p>I’ll keep this simple as well. To evaluate a method’s performance, I will use <strong>accuracy</strong> and <strong>macro F1-score</strong>. Accuracy is suitable 
+here as the dataset is balanced, and macro F1-score will give us a better understanding of how the model performs across 
+different classes, especially if some classes are harder to classify than others. If the model systematically misclassifies 
+a certain class, its F1-score will be very low, and macro F1 will reflect that.</p>
+<h2 id="few-shot-techniques">Few-shot techniques</h2>
+<h3 id="zero-shot-prompting">Zero-shot prompting</h3>
+<p>The most basic approach to few-shot classification is… not to provide any examples at all. Let’s simply describe the 
+task to the model and ask it to classify the input based on that description. This approach is called <strong>zero-shot prompting</strong>.
+You can find the system prompt that I used in this experiment <a href="https://github.com/zhukpm/openapps/blob/main/few_shot_text_classification/prompts/zero-shot-system.md.jinja">on github</a>.
+It contains a brief description of the task and a list of all available scientific areas grouped by domain. It doesn’t 
+explain areas in detail, as I want to see how much the model can do just based on the names of the areas and its general 
+knowledge about them. Also, this should increase the importance of the few-shot examples, as they will be the only source 
+of information about “how to classify” for the model.</p>
+<p>This approach yields the following results on the test set:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy</td>
+<td style="text-align: right;">0.631</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1</td>
+<td style="text-align: right;">0.632</td>
+</tr>
+</tbody>
+</table>
+<p>This will be our baseline. Performing worse than that means the few-shot examples are not helpful, and we only 
+confuse the model by providing them. Performing better will mean the few-shot examples are helpful, and we can 
+potentially optimize their selection to get even better results. </p>
+<p>Overall, I would say that the results are quite good for zero-shot prompting, given that we have 35 classes to choose from.</p>
+<h3 id="random-few-shot-selection">Random few-shot selection</h3>
+<p>Probably the most straightforward way to select few-shots is to simply randomly sample a few examples from the training 
+set. This approach is called <strong>random few-shot selection</strong>. An important note here is that since we have 35 classes, we 
+may end up selecting examples from only a few of them and not covering some others, which may not be ideal for the model’s performance. So we’ll compare two approaches here: one with completely random selection, and another 
+one with <em>stratified</em> random selection, where we ensure that we select the same number of examples from each class.</p>
+<p>Here and below I will use 70 few-shot examples in total, and 2 examples per class for the stratified approach (which 
+results in the same total number of examples). So in total I will always provide the model with 70 examples, but the way 
+I select them will differ. </p>
+<blockquote>
+<p>The number of few-shot examples does matter, and it is a hyperparameter that can be optimized as well. I chose 70 
+examples for this experiment as it’s a good balance between providing the model with enough information about the task 
+and not spending a lot of time/money on inference (as the more examples we provide, the more tokens we use, and the more 
+expensive the inference becomes).</p>
+</blockquote>
+<p>The results of random few-shot selection are the following:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy (70 total)</td>
+<td style="text-align: right;">0.636</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (70 total)</td>
+<td style="text-align: right;">0.624</td>
+</tr>
+<tr>
+<td style="text-align: left;">Accuracy (stratified)</td>
+<td style="text-align: right;">0.645</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (stratified)</td>
+<td style="text-align: right;">0.637</td>
+</tr>
+</tbody>
+</table>
+<p>We can see two things here. First, random few-shot selection does improve the performance a bit compared to zero-shot 
+prompting, which means that the examples do provide some useful information to the model. Second, stratified random 
+selection performs better than completely random selection, which means that providing examples from all classes is 
+beneficial for the model’s performance. I would say that the results align with my expectations (which is a good sign).</p>
+<h3 id="k-nearest-neighbors-few-shot-selection">K-nearest neighbors few-shot selection</h3>
+<p><img alt="K-nearest neighbors few-shot selection" class="image-process-article-image" src="https://vzhukov.dev/images/010/derivatives/article-image/knn.png"/></p>
+<div class="caption">
+<p>Spaces, embeddings, neighbors, and the whole party :)</p>
+</div>
+<p>This approach is based on the following idea: instead of randomly selecting examples from the training set, let’s select 
+examples that are <em>more similar</em> to the one we want to classify. The intuition behind this is that if we provide 
+the model with examples similar to the input, it will be easier for the model to understand what we want from it.
+These similar examples could also belong to different classes, which may help the model better understand 
+<em>the boundaries</em> between classes and thus improve its performance.</p>
+<p>A very important note here is that this approach is much more expensive than the previous ones. First, we need to compute 
+embeddings for all examples in the training set and store them somewhere. Second, for each input we want to classify, 
+we need to compute its embedding and then find the nearest neighbors in the embedding space. This adds some overhead 
+to the inference time. Lastly, these 140 turns (70 examples with 2 turns each) <em>most likely</em> will be different for each input, 
+which means that we won’t be able to make use of <a href="https://docs.vllm.ai/en/stable/design/prefix_caching/"><strong>prefix caching</strong></a> 
+to speed up the inference and lower its cost (as the only common part between different inputs will be the system prompt).</p>
+<p>There is another concern about few-shot selection — how to rank the examples and where to place them in the conversation. Should we 
+put the closest examples first (right after the system prompt), or should we put them last (right before the input we 
+want to classify)? Or should we randomly shuffle them? I won’t be extensively testing all these options and will simply put 
+the closest examples last, as in my opinion it makes more sense to show the model the most relevant examples right before 
+asking it to classify the input, so it can better grasp what we want from it. </p>
+<p>Regarding embeddings — I will use OpenAI’s <a href="https://developers.openai.com/api/docs/models/text-embedding-3-large">text-embedding-3-large</a>
+model with cosine similarity as the distance metric to find the nearest neighbors. I will also select only the top 20 closest 
+examples from the training set, as the cost of this approach is much higher.</p>
+<p>The results of k-nearest neighbors few-shot selection are the following:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy (20 total)</td>
+<td style="text-align: right;">0.707</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (20 total)</td>
+<td style="text-align: right;">0.696</td>
+</tr>
+</tbody>
+</table>
+<p>A significant improvement compared to the previous approaches! Providing the model with examples that are more 
+similar to the input definitely helps it better understand the task and thus improve its performance. But 
+it comes at the cost of much higher inference time and expense.</p>
+<h3 id="hardest-few-shot-selection"><span class="dquo">“</span>Hardest” few-shot selection</h3>
+<p>Another idea goes like this: let’s show the model examples that it finds the hardest to classify. Why? Because if the 
+model finds certain examples easy to classify, it means it already understands how to handle them, and providing 
+those won’t add much value to the model’s performance. On the other hand, if the model finds some examples hard to 
+classify, it means it doesn’t fully understand their characteristics, and providing them may help the model 
+better understand the differences and boundaries between classes, thus improving its performance.</p>
+<blockquote>
+<p>This method is very prone to outliers and label errors. If the model finds some example hard to classify because it’s 
+mislabeled, providing it to the model not only won’t help but may actually hurt the performance. So it’s important 
+to be very careful with this approach. You should consider removing potential outliers and label errors from the 
+training set before applying this method.</p>
+</blockquote>
+<p>To find the hardest examples, I will simply train a <em>logistic regression model</em> on the training set (on the embeddings 
+of the examples), and then choose the ones with the highest <em>cross-entropy loss</em>.</p>
+<div class="math">$$
+\text{Loss} = - \log(\hat{y}_i)
+$$</div>
+<p>where <span class="math">\(\hat{y}_i\)</span> is the predicted probability of the correct class for example <span class="math">\(i\)</span>.</p>
+<p>Just as before, I first select the top 70 hardest examples and then compare it to taking the 2 hardest examples from each class.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy (70 total)</td>
+<td style="text-align: right;">0.582</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (70 total)</td>
+<td style="text-align: right;">0.589</td>
+</tr>
+<tr>
+<td style="text-align: left;">Accuracy (stratified)</td>
+<td style="text-align: right;">0.602</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (stratified)</td>
+<td style="text-align: right;">0.594</td>
+</tr>
+</tbody>
+</table>
+<p>Metrics are quite bad here. I didn’t dive deep into the analysis of the results, but I suspect that there <em>are</em> some 
+label errors or outliers in the dataset that we chose to show to the model, thereby degrading its performance. 
+However, performing a stratified selection yields slightly better results, which aligns with the expectations and previous observations.</p>
+<blockquote>
+<p>Note that I’ve cheated here a bit. Instead of taking the hardest examples for the model I’m using, I use a proxy model 
+to find them. I do that because I really want to rank all the samples in the training set, and acquiring proper 
+probabilities using LLMs is another not-so-trivial problem.</p>
+</blockquote>
+<h3 id="diversity-based-few-shot-selection">Diversity-based few-shot selection</h3>
+<p>Here’s another idea: instead of taking the “hardest” examples, let’s take a “diverse” subset of the training set. That way 
+we will “cover” more different examples, and the model will better understand the general characteristics of the classes 
+and the decision boundaries between them.</p>
+<p>Sounds great! But how do we select the most “diverse” subset? Or even just <em>a</em> “diverse” subset? How do we measure 
+diversity? And what’s the algorithm to do that in a reasonable time? We definitely don’t want to try every possible combination: </p>
+<div class="math">$$
+\left(\begin{array}{c}700 \\ 70\end{array}\right) \approx 10^{97.5} \text{ combinations}
+$$</div>
+<p>That’s not feasible at all.</p>
+<h4 id="k-medoids-selection">K-Medoids selection</h4>
+<p>One option is the <a href="https://en.wikipedia.org/wiki/K-medoids"><strong>k-medoids</strong></a> algorithm. You’ve probably heard 
+about <em>k-means</em>, which is a popular clustering algorithm. This is almost the same, but instead of using some “centroid” 
+to represent each cluster, k-medoids uses <em>actual examples</em> from the dataset as centers.</p>
+<p>I won’t dive into its algorithmic details here; fortunately, there are already libraries that implement it. I will use 
+the <a href="https://scikit-learn-extra.readthedocs.io/en/stable/index.html">scikit-learn-extra</a> library, which provides an 
+implementation of the <a href="https://scikit-learn-extra.readthedocs.io/en/stable/auto_examples/cluster/plot_kmedoids_digits.html#sphx-glr-auto-examples-cluster-plot-kmedoids-digits-py">k-medoids algorithm</a>.
+The <span class="caps">API</span> is very simple:</p>
+<pre><code class="language-python">import numpy as np
+from sklearn_extra.cluster import KMedoids
+
+def select_k_medoids(
+        embeddings: np.ndarray,
+        k: int,
+        random_seed: int = 42
+) -&gt; list[int]:
+    kmedoids = KMedoids(
+        n_clusters=k,
+        metric='cosine',
+        method='pam',
+        init='k-medoids++',
+        max_iter=500,
+        random_state=random_seed
+    )
+    kmedoids.fit(embeddings)
+    return kmedoids.medoid_indices_.tolist()
+</code></pre>
+<p>This approach gives us the following results:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy (70 total)</td>
+<td style="text-align: right;">0.634</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (70 total)</td>
+<td style="text-align: right;">0.626</td>
+</tr>
+<tr>
+<td style="text-align: left;">Accuracy (stratified)</td>
+<td style="text-align: right;">0.661</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (stratified)</td>
+<td style="text-align: right;">0.658</td>
+</tr>
+</tbody>
+</table>
+<p>While general dataset medoids didn’t yield better results than random selection, stratified medoids (i.e., taking two 
+medoids from each class) performed <em>much</em> better. Yes, it’s worse than k-nearest neighbors, but its prompt is <em>fixed</em>, 
+making the inference much faster and cheaper.</p>
+<h4 id="determinantal-point-processes">Determinantal Point Processes</h4>
+<p>This is where things get a bit more complicated. But I’ll try to keep it as simple as possible (taking into account 
+that I don’t fully understand the math behind it myself).</p>
+<p>Suppose we have a set of <span class="math">\(n\)</span> vectors from the <span class="math">\(k\)</span>-dimensional space. We want to select a subset of these vectors that are 
+as “spread out” as possible (meaning that they are not too similar to each other). Can we somehow quantify this “spread-out-ness”? We actually can — we can measure the volume of the <a href="https://en.wikipedia.org/wiki/Parallelepiped#Parallelotope">parallelotope</a> 
+formed by these vectors. The larger the volume, the more “spread out” the vectors are. To calculate the volume, we can use 
+the <a href="https://en.wikipedia.org/wiki/Gram_matrix">Gram matrix</a> of the vectors, which is a matrix of their pairwise inner 
+products. Its determinant is the square of the <span class="math">\(n\)</span>-dimensional volume of the parallelotope formed by the vectors.</p>
+<blockquote>
+<p>This approach is also used to determine the linear independence of a set of vectors. If the determinant of the Gram 
+matrix is zero, it means that the vectors are linearly dependent.</p>
+</blockquote>
+<p>Let’s see how it works on an example (3 vectors, 3-dimensional space). </p>
+<p>Case A: some random vectors.</p>
+<div class="math">$$
+\begin{split}
+    &amp; A = \begin{bmatrix}
+0.79 &amp; 0.57 &amp; 0.23 \\
+0.11 &amp; 0.44 &amp; 0.89 \\
+0.49 &amp; 0.32 &amp; 0.81 \\
+\end{bmatrix} \\
+    &amp; \text{Gram}(A) = A \cdot A^T = \begin{bmatrix}
+1.00 &amp; 0.54 &amp; 0.76 \\
+0.54 &amp; 1.00 &amp; 0.92 \\
+0.76 &amp; 0.92 &amp; 1.00 \\
+\end{bmatrix} \\
+    &amp; \text{det}(\text{Gram}(A)) \approx 0.0453
+\end{split}
+$$</div>
+<p>The results are somewhat expected; as we can see, some vectors are quite similar (have high inner products), and the determinant 
+(the squared volume) is not that high.</p>
+<p>Case B: orthogonal vectors.</p>
+<div class="math">$$
+\begin{split}
+    &amp; B = \begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix} \\
+    &amp; \text{Gram}(B) = B \cdot B^T = \begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix} \\
+    &amp; \text{det}(\text{Gram}(B)) = 1
+\end{split}
+$$</div>
+<p>As we can see, the vectors are completely different (orthogonal), and the determinant is the highest possible. </p>
+<blockquote>
+<p>Note that this method is somewhat “unstable” in the sense that if we have two very similar vectors, the determinant 
+will be very close to zero. And if we add a new random vector to the set of orthogonal vectors, the determinant will 
+drop to 0, as the set will become linearly dependent. It is also sensitive to vector scaling, so normalizing 
+the vectors is important to achieve “pure diversity-based selection”.</p>
+</blockquote>
+<p>Now on to <span class="caps">DPP</span>. Suppose we have a square matrix <span class="math">\(L\)</span> of size <span class="math">\(n \times n\)</span>. A <span class="caps">DPP</span> defines a probability distribution over 
+<em>subsets</em>, where the probability of selecting a subset <span class="math">\(S\)</span> is:</p>
+<div class="math">$$
+P(S) \propto \text{det}(L_S)
+$$</div>
+<p>where <span class="math">\(L_S\)</span> is the submatrix of <span class="math">\(L\)</span> indexed by items in <span class="math">\(S\)</span>. The higher the determinant of the submatrix, the higher 
+the probability of selecting that subset. </p>
+<p>In our case <span class="math">\(L = E \cdot E^T\)</span>, where <span class="math">\(E\)</span> is the matrix of embeddings of the examples in the training set. 
+<span class="math">\(E_{ij} = \left\langle e_i, e_j \right\rangle\)</span>, where <span class="math">\(e_i\)</span> is the embedding of example <span class="math">\(i\)</span>:</p>
+<ul>
+<li>Diagonal entries <span class="math">\(L_{ii} = {\Vert e_i \Vert}^2\)</span> represent the “quality” of each example (equal to <span class="math">\(1\)</span> if we normalize the embeddings).</li>
+<li>Off-diagonal entries <span class="math">\(L_{ij} = \left\langle e_i, e_j \right\rangle\)</span> represent the similarity between examples <span class="math">\(i\)</span> and <span class="math">\(j\)</span>.</li>
+</ul>
+<p>So, the <span class="caps">DPP</span> will assign higher probabilities to subsets of more “diverse” examples (with lower similarities): </p>
+<ul>
+<li>Vectors that are spread apart (diverse) → large volume → high probability;</li>
+<li>Near-duplicate vectors → near-zero volume → near-zero probability.</li>
+</ul>
+<p>Thankfully (again), there are already libraries that implement <span class="caps">DPP</span> sampling. I will use the 
+<a href="https://dppy.readthedocs.io/en/latest/index.html">DPPy</a> library, which provides an implementation for <span class="caps">DPP</span> sampling (even 
+restricting it to a fixed number of items). The <span class="caps">API</span> is very simple as well:</p>
+<pre><code class="language-python">import numpy as np
+from dppy.finite_dpps import FiniteDPP
+
+k = 70  # number of examples to select
+random_seed = 42
+embedder = ... # some embedding model
+X = [...] # list of examples in the training set
+
+all_embeddings = np.array(embedder.get(X))
+normed = all_embeddings / np.linalg.norm(all_embeddings, axis=1, keepdims=True)
+dpp = FiniteDPP('likelihood', L=(normed @ normed.T))
+dpp.sample_exact_k_dpp(size=k, random_state=random_seed)
+selected_indices = dpp.list_of_samples[0]
+</code></pre>
+<p>With this approach we get the following results:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy (70 total)</td>
+<td style="text-align: right;">0.657</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (70 total)</td>
+<td style="text-align: right;">0.655</td>
+</tr>
+<tr>
+<td style="text-align: left;">Accuracy (stratified)</td>
+<td style="text-align: right;">0.627</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (stratified)</td>
+<td style="text-align: right;">0.621</td>
+</tr>
+</tbody>
+</table>
+<p>First, general <span class="caps">DPP</span> selection performs better than general k-medoids selection, and is even comparable to stratified 
+k-medoids selection. Second, stratified <span class="caps">DPP</span> selection performs worse than general <span class="caps">DPP</span> selection, which is quite 
+surprising. I think we face the same problem as with the “hardest” selection — there are some outliers or label errors 
+in the dataset, and by selecting the most “dissimilar” examples we end up picking these outliers, which degrades the 
+model’s performance.</p>
+<p>Another important note here is that with both k-medoids and <span class="caps">DPP</span> selection we select some “diverse” examples, and not 
+necessarily the “most informative” ones or the ones closest to the decision boundaries. </p>
+<h3 id="importance-based-few-shot-selection">Importance-based few-shot selection</h3>
+<p>There is an entire family of methods that belong to the category of <a href="https://arxiv.org/abs/2409.18153">Most Influential Subset Selection (<span class="caps">MISS</span>)</a>. 
+The idea is to select “a subset of training samples with the greatest collective influence.” I won’t dive into the methods 
+that belong specifically to this category, but I will try to implement a simple version of it - an importance-based 
+few-shot selection.</p>
+<p>The idea is quite simple: let’s define the “importance” for each example in the training set, and then select <span class="math">\(k\)</span> 
+examples with the highest importance. The importance of an example can be defined in different ways, but I’ll use the 
+following approach:</p>
+<div class="math">$$
+\begin{split}
+    &amp; \text{Importance}(x_i) = \left\langle \text{p} , f_i \right\rangle \\ 
+    &amp; f_i = \left(\begin{matrix}
+\text{entropy}(x_i) \\
+\text{consistency}(x_i) \\
+-\text{density}(x_i) \\
+\end{matrix}\right)
+\end{split}
+$$</div>
+<p><span class="math">\(p\)</span> is a vector of weights that we will optimize on the validation set, and <span class="math">\(f^i\)</span> is a vector of features for example <span class="math">\(i\)</span>.
+Entropy is calculated the same way as in the “hardest” selection. Consistency is the fraction of examples in the
+vicinity of example <span class="math">\(i\)</span> that belong to the same class as <span class="math">\(i\)</span> (<span class="math">\(k_c\)</span>-nearest neighbors). Density is the inverse of the 
+average distance from example <span class="math">\(i\)</span> to other examples in its vicinity (<span class="math">\(k_d\)</span>-nearest neighbors).</p>
+<ul>
+<li>The higher the entropy, the more “uncertain” the example is, and thus the more “important” it is to provide to the model.</li>
+<li>The higher the consistency, the more “representative” the example is for its class, and thus the more “important” it is to provide to the model.</li>
+<li>The lower the density, the more “unusual” the example is, and thus the more “important” it is to provide to the model.</li>
+</ul>
+<blockquote>
+<p>This method is prone to the same problems as the “hardest” and “diverse” selection — it can select outliers and label 
+errors, which can degrade the model’s performance. So it’s important to either manually check the selected examples 
+or use some dataset cleaning techniques.</p>
+</blockquote>
+<p>After optimizing the weights on the validation set, I ended up with the following values: </p>
+<div class="math">$$
+\text{p} = \left(\begin{array} \text{0}.4 \\ 0.5 \\ 0.1 \\ \end{array}\right)
+$$</div>
+<p>And the results on the test set are the following:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Accuracy (70 total)</td>
+<td style="text-align: right;">0.663</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (70 total)</td>
+<td style="text-align: right;">0.657</td>
+</tr>
+<tr>
+<td style="text-align: left;">Accuracy (stratified)</td>
+<td style="text-align: right;">0.644</td>
+</tr>
+<tr>
+<td style="text-align: left;">Macro F1 (stratified)</td>
+<td style="text-align: right;">0.631</td>
+</tr>
+</tbody>
+</table>
+<h2 id="conclusion">Conclusion</h2>
+<p>Let’s first summarize the results of all the methods in one table:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: right;">Accuracy (non-stratified)</th>
+<th style="text-align: right;">Macro F1 (non-stratified)</th>
+<th style="text-align: right;">Accuracy (stratified)</th>
+<th style="text-align: right;">Macro F1 (stratified)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Zero-shot prompting</td>
+<td style="text-align: right;">0.631</td>
+<td style="text-align: right;">0.632</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">Random selection</td>
+<td style="text-align: right;">0.636</td>
+<td style="text-align: right;">0.624</td>
+<td style="text-align: right;">0.645</td>
+<td style="text-align: right;">0.637</td>
+</tr>
+<tr>
+<td style="text-align: left;">K-nearest neighbors</td>
+<td style="text-align: right;">0.707</td>
+<td style="text-align: right;">0.696</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">“Hardest” selection</td>
+<td style="text-align: right;">0.582</td>
+<td style="text-align: right;">0.589</td>
+<td style="text-align: right;">0.602</td>
+<td style="text-align: right;">0.594</td>
+</tr>
+<tr>
+<td style="text-align: left;">K-medoids selection</td>
+<td style="text-align: right;">0.634</td>
+<td style="text-align: right;">0.626</td>
+<td style="text-align: right;">0.661</td>
+<td style="text-align: right;">0.658</td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="caps">DPP</span> selection</td>
+<td style="text-align: right;">0.657</td>
+<td style="text-align: right;">0.655</td>
+<td style="text-align: right;">0.627</td>
+<td style="text-align: right;">0.621</td>
+</tr>
+<tr>
+<td style="text-align: left;">Importance-based selection</td>
+<td style="text-align: right;">0.663</td>
+<td style="text-align: right;">0.657</td>
+<td style="text-align: right;">0.644</td>
+<td style="text-align: right;">0.631</td>
+</tr>
+</tbody>
+</table>
+<p>Overall, we can observe the following trends:</p>
+<ul>
+<li>Providing few-shot examples to the model <strong>does improve its performance</strong> compared to zero-shot prompting;</li>
+<li>The way we select few-shot examples <strong>does matter</strong>;</li>
+<li>Random selection is a good baseline but <strong>is not the best approach</strong>;</li>
+<li>Stratified selection (ensuring that we select examples from all classes) <strong>is generally better</strong> than non-stratified selection;</li>
+<li>Some methods <strong>may be prone to selecting outliers and label errors</strong>;</li>
+<li>K-nearest neighbors selection yields <strong>the best performance</strong>, but it is also the most expensive in terms of inference time and cost;</li>
+<li>K-medoids and <span class="caps">DPP</span> selection provide <strong>a good balance</strong> between performance and inference cost.</li>
+</ul>
+<p>The method you choose will depend not only on the performance you want to achieve but also on the inference time and 
+cost constraints you have. If you want to get the best possible results and don’t care about the inference cost, 
+k-nearest neighbors selection may be a good choice. If you want to achieve good results with a fixed prompt and lower 
+inference cost, diversity methods may come in handy. However, all of this should be taken with caution, as the results may 
+vary depending on the dataset, the model, and the specific implementation details.</p>
+<p>You can find the code for this article on my <a href="https://github.com/zhukpm/openapps/tree/main/few_shot_text_classification">GitHub</a>.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning</a> on
+    <time class="published" datetime="2026-02-16T11:30:00+01:00">        16th
+February 2026
+    </time>
+</footer>
+<section class="tags">
+<a href="https://vzhukov.dev/posts/tag/llms">LLMs</a>
+<a href="https://vzhukov.dev/posts/tag/machine-learning">Machine Learning</a>
+<a href="https://vzhukov.dev/posts/tag/nlp">NLP</a>
+<a href="https://vzhukov.dev/posts/tag/python">Python</a>
+<a href="https://vzhukov.dev/posts/tag/text-classification">Text Classification</a>
+</section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a></li>
+<li><a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack">Essential Tools for Machine Learning Engineers: My Real-World Stack</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a></li>
+<li><a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a></li>
+</ul>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://vzhukov.dev/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Privacy</h2>
+<p>
+                        This site uses Google Analytics to understand visitor traffic and improve content.
+                        It collects anonymous data like country, language, and pages visited - no personal
+                        information. By continuing to browse, you agree to this minimal tracking.
+                        <a href="https://www.google.com/search?q=is+google+analytics+tracking+safe" rel="noopener noreferrer" target="_blank">Read more</a>.</p>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/math">Math (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/software-engineering">Software Engineering (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/ai-ml-based-applications">AI &amp; ML Based Applications (1)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms">Few-Shot Techniques for Text Classification Using LLMs</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea">Data-Grounded Country Comparison: The Service Idea</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack">Essential Tools for Machine Learning Engineers: My Real-World Stack</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/what-i-have-learned-during-my-1275-day-streak-on-leetcode">What I have learned during my 1275+ day streak on LeetCode</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p><a href="https://vzhukov.dev/posts">All posts</a> | <a href="https://vzhukov.dev/posts/tags">Tags</a> | <a href="https://vzhukov.dev/posts/categories">Categories</a></p>
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.js,npm/prismjs@1.30.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+</html>
