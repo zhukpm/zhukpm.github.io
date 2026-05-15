@@ -347,6 +347,20 @@ article.hentry {
 	padding: 0.5em;
 }
 
+.sidebar-achievement img {
+  display: block;
+  margin: 0 auto;
+}
+
+.sidebar-achievement + .sidebar-achievement {
+  margin-top: 1rem; /* tune to taste */
+}
+
+.sidebar-achievement a {
+	display: block;
+	line-height: 0;
+}
+
 .entry-content > table {
 	width: 100%;
 
