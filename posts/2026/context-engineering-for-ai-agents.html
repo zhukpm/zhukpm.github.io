@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N19THDZVEY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-N19THDZVEY');
+</script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet"/>
+<link href="/theme/css/style.css" rel="stylesheet"/>
+<link href="/theme/css/fonts.css" rel="stylesheet"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Context Engineering for AI Agents</title>
+<meta charset="utf-8"/>
+<meta content="Viacheslav Zhukov" property="og:site_name"/>
+<meta content="context engineering, AI agents, LLM agents, prompt engineering, RAG, retrieval, Model Context Protocol, MCP, tool design, agent memory, compaction, prefix caching, prompt caching, few-shot prompting, agent evaluation, observability" name="keywords"/>
+<meta content="article" property="og:type"/>
+<meta content="Context Engineering for AI Agents - Viacheslav Zhukov" property="og:title"/>
+<meta content="https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents" property="og:url"/>
+<meta content="2026-07-18T12:00:00+02:00" property="article:published_time"/>
+<meta content="Viacheslav Zhukov" property="article:author"/>
+<meta content="AI Agents" property="article:section"/>
+<meta content="A practical guide to context engineering for AI agents: selecting examples, retrieval, tools and MCP, memory, compaction, prefix caching, and evaluation." name="description"/>
+<meta content="A practical guide to context engineering for AI agents: selecting examples, retrieval, tools and MCP, memory, compaction, prefix caching, and evaluation." property="og:description"/>
+<meta content="AI Agents" name="tags"/>
+<meta content="AI Agents" property="article:tag"/>
+<meta content="Context Engineering" name="tags"/>
+<meta content="Context Engineering" property="article:tag"/>
+<meta content="LLMs" name="tags"/>
+<meta content="LLMs" property="article:tag"/>
+<meta content="MCP" name="tags"/>
+<meta content="MCP" property="article:tag"/>
+<meta content="Prompt Engineering" name="tags"/>
+<meta content="Prompt Engineering" property="article:tag"/>
+<meta content="RAG" name="tags"/>
+<meta content="RAG" property="article:tag"/>
+<meta content="https://vzhukov.dev/images/011/context-engineering-hero.png" property="og:image"/>
+<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@type": "BlogPosting",
+	  "mainEntityOfPage": {
+		"@type": "WebPage",
+		"@id": "https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents"
+	  },
+	  "headline": "Context Engineering for AI\u00a0Agents",
+	  "name": "Context Engineering for AI\u00a0Agents",
+	  "description": "A practical guide to context engineering for AI agents: selecting examples, retrieval, tools and MCP, memory, compaction, prefix caching, and\u00a0evaluation.",
+	  "articleSection": "AI Agents",
+      "audience": {
+		"@type": "PeopleAudience",
+		"audienceType": "software developers"
+	  },
+      "wordCount": 3528,
+	  "keywords": "context engineering, AI agents, LLM agents, prompt engineering, RAG, retrieval, Model Context Protocol, MCP, tool design, agent memory, compaction, prefix caching, prompt caching, few-shot prompting, agent evaluation, observability",
+	  "inLanguage": "en",
+	  "datePublished": "2026-07-18T12:00:00+0200",
+	  "dateModified": "2026-07-18T12:00:00+0200",
+	  "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+	  "url": "https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents",
+	  "isAccessibleForFree": true,
+	  "author": {
+		"@type": "Person",
+		"name": "Viacheslav Zhukov",
+	    "url": "https://vzhukov.dev"
+	  },
+	  "publisher": {
+		"@type": "Person",
+		"name": "Viacheslav Zhukov",
+	    "url": "https://vzhukov.dev"
+	  },
+	  "image": {
+		"@type": "ImageObject",
+		"url": "https://vzhukov.dev/images/011/context-engineering-hero.png"
+	  }	}
+	</script>
+<meta content="#1F3683" name="theme-color"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="apple-touch-icon" sizes="192x192"/>
+<link href="https://vzhukov.dev/logo_rounded.png" rel="icon"/>
+<link href="https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents" rel="canonical"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Viacheslav Zhukov", "item": "https://vzhukov.dev"}, {"@type": "ListItem", "position": 2, "name": "Posts", "item": "https://vzhukov.dev/posts"}, {"@type": "ListItem", "position": 3, "name": "2026", "item": "https://vzhukov.dev/posts/2026"}, {"@type": "ListItem", "position": 4, "name": "Context engineering for ai agents", "item": "https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents"}]}</script></head>
+<body class="home" id="index">
+<header class="body" id="banner">
+<div class="site-name"><a href="https://vzhukov.dev/">Viacheslav Zhukov</a></div>
+<p>Notes on AI, ML, Software Engineering and Math</p>
+</header>
+<nav id="menu"><ul>
+<li><a href="/">Posts</a></li>
+<li><a href="https://vzhukov.dev/javascript-memes">Javascript Memes</a></li>
+<li><a href="https://vzhukov.dev/cv"><span class="caps">CV</span></a></li>
+</ul></nav>
+<main data-pagefind-body="" id="content">
+<header>
+<h1 class="entry-title" data-pagefind-meta="title">
+<a href="https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents" rel="bookmark" title="Permalink to Context Engineering for AI Agents">Context Engineering for <span class="caps">AI</span> Agents</a>
+</h1>
+</header>
+<section class="entry-content key-text-content">
+<p><img alt="Context Engineering for AI Agents" class="image-process-crisp" src="https://vzhukov.dev/images/011/derivatives/crisp/1x/context-engineering-hero.png" srcset="https://vzhukov.dev/images/011/derivatives/crisp/1x/context-engineering-hero.png 1x, https://vzhukov.dev/images/011/derivatives/crisp/2x/context-engineering-hero.png 2x, https://vzhukov.dev/images/011/derivatives/crisp/4x/context-engineering-hero.png 4x"/></p>
+<div class="caption">
+<p>What should the model see right now?</p>
+</div>
+<p>In my previous article about <a href="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms">few-shot techniques for text classification</a>, I compared different ways to select examples for an <span class="caps">LLM</span> classifier. The problem looked narrow: we have an input, we have a set of possible labels, and we need to decide which examples to show to the model.</p>
+<p>But that small problem is actually a useful entry point into a much larger one.</p>
+<p>When we build agents, we still ask the same question, just with more moving parts:</p>
+<blockquote>
+<p>What should the model see right now?</p>
+</blockquote>
+<p>For a classifier, the answer may be: task description, label list, and 20 nearest examples. For an agent, the answer may include system instructions, user request, retrieved documents, tool schemas, <span class="caps">MCP</span> resources, previous tool outputs, memory, compressed history, intermediate state, and maybe a few examples as well.</p>
+<p>This is what people now call <strong>context engineering</strong>. I do not think it is a magical new discipline. It is more like prompt engineering growing up and meeting software engineering. Prompt wording still matters, of course (however, it matters less and less with modern LLMs), but in many agent systems the harder part is not how to phrase the instruction. The harder part is deciding what information should be available to the model, when, and in which form.</p>
+<p>In this article I will walk through how I think about context engineering for <span class="caps">AI</span> agents. We will start with few-shot prompting, then move to retrieval, <span class="caps">MCP</span>/tools, memory, compression, prefix caching, and evaluation.</p>
+<div class="toc"><span class="toctitle">Table of contents:</span><ul>
+<li><a href="#why-context-engineering-matters">Why context engineering matters</a></li>
+<li><a href="#from-few-shot-prompting-to-context-engineering">From few-shot prompting to context engineering</a></li>
+<li><a href="#what-counts-as-context">What counts as context</a></li>
+<li><a href="#a-useful-mental-model-write-select-compress-isolate">A useful mental model: write, select, compress, isolate</a><ul>
+<li><a href="#write">Write</a></li>
+<li><a href="#select">Select</a></li>
+<li><a href="#compress">Compress</a></li>
+<li><a href="#isolate">Isolate</a></li>
+</ul>
+</li>
+<li><a href="#just-in-time-retrieval">Just-in-time retrieval</a></li>
+<li><a href="#mcp-and-tools-are-context-too"><span class="caps">MCP</span> and tools are context too</a></li>
+<li><a href="#memory-and-compaction">Memory and compaction</a></li>
+<li><a href="#prefix-caching-and-stable-context">Prefix caching and stable context</a></li>
+<li><a href="#a-small-context-building-pipeline-in-python">A small context-building pipeline in Python</a></li>
+<li><a href="#how-to-evaluate-context-engineering">How to evaluate context engineering</a></li>
+<li><a href="#practical-checklist">Practical checklist</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#sources">Sources</a></li>
+</ul>
+</div>
+<h2 id="why-context-engineering-matters">Why context engineering matters</h2>
+<p>A simple <span class="caps">LLM</span> application can often get away with a good prompt. You write clear instructions, maybe add a couple of examples, call the model, parse the result, and move on.</p>
+<p>Agents are different. They usually run for multiple steps. They call tools. They observe results. They may search files, inspect code, ask for clarification, update a plan, or hand off work to another agent. The input to the next model call is no longer just “the prompt”. It is a state assembled from many sources.</p>
+<p><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic describes context</a> as the tokens included when sampling from an <span class="caps">LLM</span>, and frames context engineering as optimizing the usefulness of those tokens under model constraints. That definition is simple, but it is enough. The context window is finite. Even if it is large, it is not free, not equally attended to, and not always clean.</p>
+<p>I have seen the same pattern many times:</p>
+<ol>
+<li>Start with a small prompt.</li>
+<li>Add one rule for an edge case.</li>
+<li>Add examples.</li>
+<li>Add output <span class="caps">JSON</span>.</li>
+<li>Add tool instructions.</li>
+<li>Add some retrieved docs.</li>
+<li>Add conversation history.</li>
+<li>Add another rule because the previous rule broke something.</li>
+</ol>
+<p>At some point the prompt becomes a landfill. The model has all the information and still makes a bad decision because the important part is buried between stale instructions and irrelevant tool outputs.</p>
+<p>So the goal is not to maximize context. The goal is to maximize useful context.</p>
+<p><img alt="Agent context window as a workbench" class="image-process-article-image" src="https://vzhukov.dev/images/011/derivatives/article-image/context-workbench.png"/></p>
+<h2 id="from-few-shot-prompting-to-context-engineering">From few-shot prompting to context engineering</h2>
+<p>Few-shot prompting is already context engineering in a small form.</p>
+<p>In the classification article, I compared random selection, nearest-neighbor selection, diversity-based selection, and a few other strategies. The interesting part was that the examples were not training data. They were <em>runtime data</em>. We changed the input to the model and changed the model behavior without updating model weights.</p>
+<p>That is exactly the context engineering mindset.</p>
+<p>For few-shot classification, the main question is:</p>
+<blockquote>
+<p>Which examples should I include?</p>
+</blockquote>
+<p>For an agent, the question becomes:</p>
+<blockquote>
+<p>Which instructions, examples, documents, tools, memories, and previous observations should I include for this step?</p>
+</blockquote>
+<p>Here is the rough mapping:</p>
+<table>
+<thead>
+<tr>
+<th>Few-shot classification</th>
+<th>Agent context engineering</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Task prompt</td>
+<td>System/developer instructions</td>
+</tr>
+<tr>
+<td>Label list</td>
+<td>Domain rules and output schema</td>
+</tr>
+<tr>
+<td>Selected examples</td>
+<td>Retrieved examples, docs, memories</td>
+</tr>
+<tr>
+<td>Input text</td>
+<td>Current user task and agent state</td>
+</tr>
+<tr>
+<td>One model call</td>
+<td>Many calls with changing context</td>
+</tr>
+<tr>
+<td>Accuracy / F1</td>
+<td>Task success, tool correctness, cost, latency, human review rate</td>
+</tr>
+</tbody>
+</table>
+<p>The bigger context surface makes everything more powerful and more fragile. With the right retrieved examples, an agent can classify a strange request correctly. With the wrong stale memory, it can confidently do the wrong thing.</p>
+<p>This is why I like the phrase “context engineering” more than I expected. It pushes us to treat context as a designed object, not as a giant string we keep appending to.</p>
+<p><img alt="From few-shot prompt to agent context pipeline" class="image-process-article-image" src="https://vzhukov.dev/images/011/derivatives/article-image/few-shot-to-agent-context.png"/></p>
+<h2 id="what-counts-as-context">What counts as context</h2>
+<p>When people say “context”, they often mean documents retrieved by <span class="caps">RAG</span>. That is only one part of it.</p>
+<p>In an agent system, context can include:</p>
+<table>
+<thead>
+<tr>
+<th>Context source</th>
+<th>Example</th>
+<th>When it helps</th>
+<th>Failure mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>System instructions</td>
+<td>Role, constraints, output contract</td>
+<td>Almost always</td>
+<td>Prompt becomes too long and contradictory</td>
+</tr>
+<tr>
+<td>Few-shot examples</td>
+<td>Labeled examples, tool-use examples</td>
+<td>When behavior needs demonstration</td>
+<td>Examples are irrelevant or misleading</td>
+</tr>
+<tr>
+<td>Retrieved docs</td>
+<td>Product docs, papers, tickets, code files</td>
+<td>When the task depends on external knowledge</td>
+<td>Retrieval brings noisy chunks</td>
+</tr>
+<tr>
+<td>Tool schemas</td>
+<td>Search tool, database tool, <span class="caps">MCP</span> tools</td>
+<td>When the model must act outside itself</td>
+<td>Tool names/descriptions are ambiguous</td>
+</tr>
+<tr>
+<td>Tool outputs</td>
+<td>Search results, <span class="caps">API</span> responses, file contents</td>
+<td>After tool calls</td>
+<td>Huge outputs pollute the next step</td>
+</tr>
+<tr>
+<td>Conversation history</td>
+<td>Previous user and assistant messages</td>
+<td>Multi-turn tasks</td>
+<td>Old instructions conflict with current task</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>User preferences, previous decisions, project facts</td>
+<td>Repeated tasks or long-running workflows</td>
+<td>Stale memory becomes false authority</td>
+</tr>
+<tr>
+<td>Compaction</td>
+<td>Summary of earlier work</td>
+<td>Long tasks near context limits</td>
+<td>Summary drops a detail that mattered</td>
+</tr>
+<tr>
+<td>Traces / feedback</td>
+<td>Human review notes, eval labels</td>
+<td>Debugging and improvement</td>
+<td>Feedback is not connected to future retrieval</td>
+</tr>
+</tbody>
+</table>
+<p>A useful test is: if changing it can change the next model output, it is context.</p>
+<p>This includes tool schemas. A tool description like <code>search(query: str)</code> is context. A more specific tool such as <code>search_project_docs(query: str, section: Literal["api", "billing", "auth"])</code> is also context, but with a better contract. The model sees it and learns what actions are possible.</p>
+<p>The <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Model Context Protocol</a> makes this even more explicit. <span class="caps">MCP</span> is an open standard for connecting <span class="caps">AI</span> applications to external systems. From the model’s point of view, <span class="caps">MCP</span> tools and resources expand the available context surface: files, APIs, databases, tickets, browser state, and other systems can become available through a standard interface.</p>
+<p>That is useful, but it also means context engineering includes tool engineering. Bad tools create bad context.</p>
+<h2 id="a-useful-mental-model-write-select-compress-isolate">A useful mental model: write, select, compress, isolate</h2>
+<p>The <a href="https://www.langchain.com/blog/context-engineering-for-agents">LangChain context engineering article</a> groups strategies into four operations: write, select, compress, and isolate. I find this taxonomy useful because it maps nicely to real engineering decisions.</p>
+<p><img alt="Write, select, compress, isolate" class="image-process-article-image" src="https://vzhukov.dev/images/011/derivatives/article-image/write-select-compress-isolate.png"/></p>
+<h3 id="write">Write</h3>
+<p>Some information should be saved outside the current context window.</p>
+<p>Examples:</p>
+<ul>
+<li>a task state object;</li>
+<li>a note that the user prefers concise answers;</li>
+<li>a label correction from a human reviewer;</li>
+<li>a summary of a tool result;</li>
+<li>a decision made earlier in a workflow.</li>
+</ul>
+<p>Writing context does not mean showing it to the model forever. It means storing it somewhere so it can be retrieved later if it becomes relevant.</p>
+<h3 id="select">Select</h3>
+<p>This is the heart of context engineering.</p>
+<p>Selection decides what enters the model call. In few-shot classification, selection may mean nearest-neighbor examples. In a code agent, it may mean the three files most related to a bug. In a support agent, it may mean the current ticket, matching docs, previous messages, and the right refund policy.</p>
+<p>Bad selection creates two opposite problems:</p>
+<ul>
+<li>missing context: the model does not see the thing it needs;</li>
+<li>context pollution: the model sees too much irrelevant or stale information.</li>
+</ul>
+<p>Both can produce confident nonsense.</p>
+<h3 id="compress">Compress</h3>
+<p>Compression keeps useful signal while reducing tokens.</p>
+<p>This can be a summary of conversation history, extracted facts from a long <span class="caps">API</span> response, or a compact representation of previous agent steps.</p>
+<p>But compression is not free. A summary is a lossy transformation. It may remove exactly the detail that mattered later. Worse, it may slightly rephrase a fact and turn it into something false. I would treat compaction summaries as useful but suspicious, especially for tasks where exact wording matters: legal text, code, financial data, medical instructions, and so on.</p>
+<h3 id="isolate">Isolate</h3>
+<p>Sometimes the best context is a separate context.</p>
+<p>A research subagent can read many documents and return a short answer to the main agent. A planner can work in one context while an executor works in another. A tool-heavy step can happen in a temporary context and return only the extracted facts.</p>
+<p>This prevents one messy context from poisoning the entire task. It also makes traces easier to read.</p>
+<h2 id="just-in-time-retrieval">Just-in-time retrieval</h2>
+<p>The simplest bad idea in context engineering is to preload everything.</p>
+<p>It is tempting. We have larger context windows now, so why not put all docs, all examples, all previous messages, all tool descriptions, and all project files into every request?</p>
+<p>Because the model still has to process it. You pay for it. Latency increases. The important tokens compete with irrelevant tokens. And if the model sees two almost-relevant facts, one current and one stale, you may not like which one it chooses.</p>
+<p>A better default is just-in-time retrieval:</p>
+<ol>
+<li>Keep a small stable prefix: role, task contract, output schema, and maybe a few canonical rules.</li>
+<li>Retrieve examples and documents for the current input.</li>
+<li>Add only tool schemas that are useful for this step.</li>
+<li>Include recent tool outputs only after extracting what matters.</li>
+<li>Log what was selected so you can debug it later.</li>
+</ol>
+<p>This is the same lesson as <span class="caps">KNN</span> few-shot selection. Nearest examples worked well because they were relevant to the current input. They were also more expensive and worse for prefix caching because the prompt changed per request. That tradeoff does not disappear in agents. It becomes the main design problem.</p>
+<h2 id="mcp-and-tools-are-context-too"><span class="caps">MCP</span> and tools are context too</h2>
+<p><span class="caps">MCP</span> is often explained as “<span class="caps">USB</span>-C for <span class="caps">AI</span> tools”. I think that analogy is fine for a quick explanation, but it hides the part that matters for context engineering.</p>
+<p>An <span class="caps">MCP</span> server does not just give the agent magical abilities. It exposes a set of tools and resources. The client decides what to make available. The model sees descriptions, names, schemas, and sometimes resource metadata. All of that becomes part of the context the model uses to decide what to do.</p>
+<p><a href="https://www.anthropic.com/news/model-context-protocol">Anthropic introduced <span class="caps">MCP</span></a> as a standard for connecting <span class="caps">AI</span> assistants to systems where data lives. This is useful exactly because agents need context from outside the chat: repositories, databases, project management tools, internal docs, logs, and so on.</p>
+<p>But tool context can fail in boring ways:</p>
+<table>
+<thead>
+<tr>
+<th>Bad tool context</th>
+<th>Better tool context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_data(query: str)</code></td>
+<td><code>search_customer_tickets(query: str, status: TicketStatus, limit: int)</code></td>
+</tr>
+<tr>
+<td>Tool description says “fetch info”</td>
+<td>Tool description says what it can and cannot fetch</td>
+</tr>
+<tr>
+<td>Returns 5,000 lines of <span class="caps">JSON</span></td>
+<td>Returns a small typed result or asks the agent to page</td>
+</tr>
+<tr>
+<td>Every tool is always visible</td>
+<td>Tools are selected per task/phase</td>
+</tr>
+<tr>
+<td>Errors are unstructured strings</td>
+<td>Errors have typed codes and recovery hints</td>
+</tr>
+</tbody>
+</table>
+<p>For example, I would rather expose this:</p>
+<pre><code class="language-python">from enum import StrEnum
+from pydantic import BaseModel, Field
+
+
+class TicketStatus(StrEnum):
+    OPEN = "open"
+    CLOSED = "closed"
+    ANY = "any"
+
+
+class SearchTicketsInput(BaseModel):
+    query: str = Field(description="Semantic search query over customer tickets")
+    status: TicketStatus = Field(default=TicketStatus.OPEN)
+    limit: int = Field(default=5, ge=1, le=20)
+
+
+class TicketSearchResult(BaseModel):
+    ticket_id: str
+    title: str
+    status: TicketStatus
+    short_summary: str
+    updated_at: str
+</code></pre>
+<p>than a generic <code>search_everything</code> tool returning raw documents. A schema is not only validation. It is also instruction.</p>
+<h2 id="memory-and-compaction">Memory and compaction</h2>
+<p>Memory sounds simple until you have to decide what should be remembered.</p>
+<p>There are at least three different things people call memory:</p>
+<ol>
+<li>Conversation history: what happened in this thread.</li>
+<li>Task state: what the agent has learned or decided while solving the current task.</li>
+<li>Long-term memory: facts or preferences saved across tasks.</li>
+</ol>
+<p>These should not be treated the same way.</p>
+<p>Conversation history is often too verbose. Task state should be explicit and structured. Long-term memory should be selective, because stale memories are dangerous. If a user once said “use <span class="caps">GPT</span>-4o for this project” and later migrated to a different stack, the agent should not keep resurrecting the old preference forever.</p>
+<p>The <a href="https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools">Anthropic cookbook on memory, compaction, and tool clearing</a> is useful here because it separates several strategies that are often mixed together:</p>
+<ul>
+<li>memory: save durable facts;</li>
+<li>compaction: summarize a long context;</li>
+<li>tool clearing: remove bulky tool results after extracting useful information.</li>
+</ul>
+<p>I like that separation. Compaction is not memory. Clearing a tool result is not forgetting. These are different operations with different risks.</p>
+<p>Here is a simple pattern I would use:</p>
+<pre><code class="language-python">from datetime import datetime, timedelta
+from pydantic import BaseModel, Field
+from typing import Literal
+
+
+class MemoryItem(BaseModel):
+    kind: Literal["user_preference", "project_fact", "decision", "correction"]
+    text: str
+    source: str
+    confidence: float = Field(ge=0.0, le=1.0)
+    created_at: datetime
+    expires_after_days: int | None = None
+
+    @property
+    def is_expired(self) -&gt; bool:
+        if self.expires_after_days is None:
+            return False
+        return datetime.now() &gt;= self.created_at + timedelta(days=self.expires_after_days)
+
+
+class CompactedState(BaseModel):
+    task_goal: str
+    decisions: list[str] = Field(default_factory=list)
+    open_questions: list[str] = Field(default_factory=list)
+    facts_needed_later: list[str] = Field(default_factory=list)
+    discarded_tool_outputs: list[str] = Field(default_factory=list)
+</code></pre>
+<p>Notice the <code>source</code>, <code>confidence</code>, and optional expiration. Without those, memory becomes a pile of old text with authority it does not deserve.</p>
+<h2 id="prefix-caching-and-stable-context">Prefix caching and stable context</h2>
+<p>Prefix caching is one of those details that looks like an inference optimization but quickly becomes a context design constraint.</p>
+<p><a href="https://developers.openai.com/api/docs/guides/prompt-caching">OpenAI prompt caching</a> reuses exact prompt prefixes to reduce latency and cost. <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Claude prompt caching</a> supports cache breakpoints for repeated prompt prefixes (fortunately, OpenAI introduced caching breakpoints as well starting with <span class="caps">GPT</span>-5.6). In open-source inference, <a href="https://docs.vllm.ai/en/stable/design/prefix_caching/">vLLM automatic prefix caching</a> describes the same core idea at the <span class="caps">KV</span>-cache level: if two requests share the same prefix, the system can reuse work.</p>
+<p>This matters for context engineering because dynamic context can destroy cache reuse.</p>
+<p>Suppose every request starts like this:</p>
+<pre><code class="language-text">system prompt
+all tool descriptions
+all label definitions
+all canonical examples
+</code></pre>
+<p>and only then adds the user input plus retrieved examples. That stable prefix can be cached.</p>
+<p>But if you insert per-request retrieved examples near the top, the prefix changes early and the cache becomes much less useful.</p>
+<p>So there is a practical layout question:</p>
+<table>
+<thead>
+<tr>
+<th>Context part</th>
+<th style="text-align: right;">Good cache behavior?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stable system instructions</td>
+<td style="text-align: right;">Yes</td>
+<td>Put early. Keep stable.</td>
+</tr>
+<tr>
+<td>Output schema</td>
+<td style="text-align: right;">Yes</td>
+<td>Put early if it rarely changes.</td>
+</tr>
+<tr>
+<td>Common tool schemas</td>
+<td style="text-align: right;">Yes</td>
+<td>Good candidate for cached prefix.</td>
+</tr>
+<tr>
+<td>User input</td>
+<td style="text-align: right;">No</td>
+<td>Changes every request.</td>
+</tr>
+<tr>
+<td>Retrieved examples</td>
+<td style="text-align: right;">Usually no</td>
+<td>Dynamic, but often high value.</td>
+</tr>
+<tr>
+<td>Tool results</td>
+<td style="text-align: right;">No</td>
+<td>Usually step-specific.</td>
+</tr>
+<tr>
+<td>Conversation tail</td>
+<td style="text-align: right;">Partly</td>
+<td>Depends on provider and cache strategy.</td>
+</tr>
+</tbody>
+</table>
+<p>This is one of the reasons I do not like treating prompts as unstructured strings. With an explicit context builder, you can decide which blocks should be stable, which should be dynamic, and where the cache boundary should be.</p>
+<h2 id="a-small-context-building-pipeline-in-python">A small context-building pipeline in Python</h2>
+<p>Let’s make the idea concrete. I will use a small paper/request classification assistant, because it connects nicely to the few-shot article.</p>
+<p>The agent receives a short text and returns a structured classification. It can retrieve examples, retrieve label definitions, use memories, and expose a small set of tools.</p>
+<p>First, define the data structures:</p>
+<pre><code class="language-python">from enum import StrEnum
+from pydantic import BaseModel, Field
+
+
+class ScientificArea(StrEnum):
+    SOFTWARE_ENGINEERING = "software engineering"
+    MACHINE_LEARNING = "machine learning"
+    BIOCHEMISTRY = "biochemistry"
+    PSYCHOLOGY = "psychology"
+    HYDRAULICS = "hydraulics"
+
+
+class FewShotExample(BaseModel):
+    input_text: str
+    label: ScientificArea
+    reason: str | None = None
+
+
+class RetrievedDocument(BaseModel):
+    doc_id: str
+    title: str
+    text: str
+    score: float
+
+
+class AgentContext(BaseModel):
+    task: str
+    output_schema: str
+    examples: list[FewShotExample]
+    documents: list[RetrievedDocument]
+    memories: list[MemoryItem]
+    available_tools: list[str]
+    compacted_state: CompactedState | None = None
+</code></pre>
+<p>Then build retrieval as a separate step:</p>
+<pre><code class="language-python">class RetrievedContext(BaseModel):
+    examples: list[FewShotExample]
+    documents: list[RetrievedDocument]
+    memories: list[MemoryItem]
+
+
+example_store = ... # some semantic search over labeled examples
+doc_store = ... # some semantic search over reference documents
+memory_store = ... # some per-user memory storage with semantic search
+
+
+def retrieve_context(task_text: str, user_id: str) -&gt; RetrievedContext:
+    examples = example_store.search(task_text, k=5)
+    documents = doc_store.search(
+        task_text,
+        filters={"type": "label_definition"},
+        k=4,
+    )
+    memories = memory_store.search(user_id=user_id, query=task_text, k=3)
+
+    return RetrievedContext(
+        examples=examples,
+        documents=documents,
+        memories=memories,
+    )
+</code></pre>
+<p>And assemble the model input deliberately:</p>
+<pre><code class="language-python">def build_context(task_text: str, user_id: str) -&gt; AgentContext:
+    retrieved = retrieve_context(task_text=task_text, user_id=user_id)
+
+    return AgentContext(
+        task=task_text,
+        output_schema='{"label": string, "confidence": number, "notes": string}',
+        examples=retrieved.examples,
+        documents=retrieved.documents,
+        memories=[
+            m for m in retrieved.memories
+            if m.confidence &gt;= 0.7 and not m.is_expired
+        ],
+        available_tools=["search_label_docs", "ask_human_reviewer"],
+        compacted_state=None,
+    )
+</code></pre>
+<p>Finally, render it into messages. I prefer keeping this rendering step boring and testable:</p>
+<pre><code class="language-python">def render_messages(context: AgentContext) -&gt; list[dict[str, str]]:
+    system = """
+You classify technical text into one scientific area.
+Return only JSON that matches the provided schema.
+If the evidence is weak, lower confidence and explain what is missing.
+""".strip()
+
+    context_block = context.model_dump_json(indent=2, exclude={"task"})
+
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": f"Context:\n{context_block}\n\nClassify:\n{context.task}"},
+    ]
+</code></pre>
+<p>This is not meant to be a universal framework. The point is simpler: context is built, not appended. Once it is structured, you can test it, log it, cache the stable parts, and compare strategies.</p>
+<p><img alt="Practical context-building pipeline" class="image-process-article-image" src="https://vzhukov.dev/images/011/derivatives/article-image/context-building-pipeline.png"/></p>
+<h2 id="how-to-evaluate-context-engineering">How to evaluate context engineering</h2>
+<p>A context strategy that sounds nice may still make the agent worse.</p>
+<p>I would log at least this for every run:</p>
+<pre><code class="language-python">from pydantic import BaseModel
+
+
+class ContextTrace(BaseModel):
+    run_id: str
+    selected_example_ids: list[str]
+    selected_doc_ids: list[str]
+    selected_memory_ids: list[str]
+    available_tools: list[str]
+    input_tokens: int
+    cached_input_tokens: int = 0
+    output_tokens: int
+    latency_ms: int
+    final_label: str | None = None
+    human_review_required: bool = False
+    task_success: bool | None = None
+</code></pre>
+<p>This trace lets you ask useful questions:</p>
+<ul>
+<li>Did the retrieved examples actually overlap with successful runs?</li>
+<li>Did adding memory reduce human review, or did it introduce stale assumptions?</li>
+<li>Did compaction lower cost without hurting task success?</li>
+<li>Did dynamic retrieval improve accuracy enough to justify worse prefix-cache reuse?</li>
+<li>Which tool descriptions are visible when the model chooses the wrong tool?</li>
+</ul>
+<p><a href="https://www.langchain.com/state-of-agent-engineering">LangChain’s State of Agent Engineering</a> reports that observability and tracing are already common among teams building agents. That makes sense. Without traces, context engineering becomes vibes. You change a prompt, add retrieval, remove memory, and hope.</p>
+<p>For classification-like tasks, you can use accuracy and macro F1, as I did in the few-shot article. For agents, I would also track:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Task success rate</td>
+<td>Did the agent finish the job?</td>
+</tr>
+<tr>
+<td>Tool-call correctness</td>
+<td>Did it call the right tool with valid arguments?</td>
+</tr>
+<tr>
+<td>Retrieval precision</td>
+<td>Were selected docs/examples useful?</td>
+</tr>
+<tr>
+<td>Human review rate</td>
+<td>How often did the agent need escalation?</td>
+</tr>
+<tr>
+<td>Cost per completed task</td>
+<td>Context can get expensive quickly.</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Multi-step agents amplify slow calls.</td>
+</tr>
+<tr>
+<td>Cache hit rate</td>
+<td>Useful for stable prefixes and repeated workflows.</td>
+</tr>
+<tr>
+<td>Failure category</td>
+<td>Missing context, noisy context, stale memory, bad tool schema, bad model output.</td>
+</tr>
+</tbody>
+</table>
+<p>The important part is to compare versions. Do not just add a memory layer because it sounds agentic. Build a small eval set, run with and without memory, and see what happens.</p>
+<h2 id="practical-checklist">Practical checklist</h2>
+<p>When designing context for an agent, I would go through this checklist:</p>
+<ul>
+<li>What information must always be present?</li>
+<li>What can be retrieved only when needed?</li>
+<li>Which examples should be selected dynamically?</li>
+<li>Which tools should be visible for this step?</li>
+<li>Are tool schemas specific enough?</li>
+<li>Which tool outputs should be summarized or cleared?</li>
+<li>What should be stored as memory, and when does it expire?</li>
+<li>What should be compressed, and what must stay exact?</li>
+<li>Which blocks should remain stable for prefix caching?</li>
+<li>What will be logged in the trace?</li>
+<li>Which metric proves the context change helped?</li>
+</ul>
+<p>This sounds a bit mechanical, but I think that is the point. Context engineering becomes useful when it stops being a vague phrase and turns into a set of design decisions you can inspect.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Few-shot prompting taught us that examples matter. Not in some abstract way, but in a very practical one: change the examples, and the model changes its behavior.</p>
+<p>Context engineering extends the same idea to agents.</p>
+<p>The examples are still there, but now they sit next to retrieved documents, tool definitions, <span class="caps">MCP</span> resources, memory, compressed state, tool outputs, and traces. Some of this context should be stable. Some should be fetched just in time. Some should be written to memory and retrieved later. Some should be aggressively removed before it pollutes the next step.</p>
+<p>The question I keep coming back to is simple:</p>
+<blockquote>
+<p>What should the model see right now?</p>
+</blockquote>
+<p>If you can answer that deliberately, log the answer, and measure whether it helped, you are doing context engineering. The rest is implementation detail. Important implementation detail, sure. But still detail.</p>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for <span class="caps">AI</span> agents - Anthropic</a></li>
+<li><a href="https://www.langchain.com/blog/context-engineering-for-agents">Context Engineering - LangChain</a></li>
+<li><a href="https://modelcontextprotocol.io/docs/getting-started/intro">What is the Model Context Protocol? - <span class="caps">MCP</span> documentation</a></li>
+<li><a href="https://www.anthropic.com/news/model-context-protocol">Introducing the Model Context Protocol - Anthropic</a></li>
+<li><a href="https://developers.openai.com/api/docs/guides/prompt-caching">Prompt caching - OpenAI <span class="caps">API</span> docs</a></li>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Prompt caching - Claude docs</a></li>
+<li><a href="https://docs.vllm.ai/en/stable/design/prefix_caching/">Automatic Prefix Caching - vLLM</a></li>
+<li><a href="https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools">Context engineering: memory, compaction, and tool clearing - Anthropic Cookbook</a></li>
+<li><a href="https://www.langchain.com/state-of-agent-engineering">State of Agent Engineering - LangChain</a></li>
+</ul>
+</section>
+<footer class="post-info">
+    Written by Viacheslav Zhukov in <a href="https://vzhukov.dev/posts/category/ai-agents">AI Agents</a> on
+    <time class="published" datetime="2026-07-18T12:00:00+02:00">        18th
+July 2026
+    </time>
+</footer>
+<section class="tags">
+<a href="https://vzhukov.dev/posts/tag/ai-agents">AI Agents</a>
+<a href="https://vzhukov.dev/posts/tag/context-engineering">Context Engineering</a>
+<a href="https://vzhukov.dev/posts/tag/llms">LLMs</a>
+<a href="https://vzhukov.dev/posts/tag/mcp">MCP</a>
+<a href="https://vzhukov.dev/posts/tag/prompt-engineering">Prompt Engineering</a>
+<a href="https://vzhukov.dev/posts/tag/rag">RAG</a>
+</section>
+<section class="related-posts">
+<h3>More like this</h3>
+<ul id="related-posts">
+<li><a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a></li>
+<li><a href="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms">Few-Shot Techniques for Text Classification Using LLMs</a></li>
+<li><a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a></li>
+</ul>
+</section>
+</main>
+<aside id="sidebar">
+<div class="sidebar-block">
+<img alt="Photo of Viacheslav Zhukov" class="profile-photo" src="https://vzhukov.dev/profile_photo.png"/>
+<p>Doing AI &amp; ML engineering @ <a href="https://www.linkedin.com/company/toloka/" rel="noopener noreferrer" target="_blank" title="Toloka">Toloka</a></p>
+<p> Occasional blogger, researcher, and math lover.</p>
+<div class="social-icons">
+<a href="https://www.linkedin.com/in/zhukpm/" rel="noopener noreferrer" target="_blank" title="LinkedIn profile of Viacheslav Zhukov">
+<img alt="LinkedIn icon" class="social-icon" src="https://www.linkedin.com/favicon.ico"/>
+</a>
+<a href="https://github.com/zhukpm" rel="noopener noreferrer" target="_blank" title="GitHub profile of Viacheslav Zhukov">
+<img alt="GitHub icon" class="social-icon" src="https://github.com/favicon.ico"/>
+</a>
+<a href="https://stackoverflow.com/users/6372685/viacheslav-zhukov" rel="noopener noreferrer" target="_blank" title="StackOverflow profile of Viacheslav Zhukov">
+<img alt="StackOverflow icon" class="social-icon" src="https://stackoverflow.com/favicon.ico"/>
+</a>
+<a href="https://leetcode.com/perrymason/" rel="noopener noreferrer" target="_blank" title="LeetCode profile of Viacheslav Zhukov">
+<img alt="LeetCode icon" class="social-icon" src="https://leetcode.com/favicon.ico"/>
+</a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Random Achievements</h2>
+<div class="sidebar-achievement">
+<a href="https://www.producthunt.com/products/tendem-by-toloka?embed=true&amp;utm_source=badge-top-post-badge&amp;utm_medium=badge&amp;utm_campaign=badge-tendem-by-toloka" rel="noopener noreferrer" target="_blank"><img alt="Tendem by Toloka - AI platform to hand off any task to a human expert | Product Hunt" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=1140851&amp;theme=neutral&amp;period=daily&amp;t=1778840019552" width="250"/></a>
+</div>
+</div>
+<div class="sidebar-block">
+<h2>Privacy</h2>
+<p>
+                        This site uses Google Analytics to understand visitor traffic and improve content.
+                        It collects anonymous data like country, language, and pages visited - no personal
+                        information. By continuing to browse, you agree to this minimal tracking.
+                        <a href="https://www.google.com/search?q=is+google+analytics+tracking+safe" rel="noopener noreferrer" target="_blank">Read more</a>.</p>
+</div>
+<div class="sidebar-block">
+<h2>Categories</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/category/machine-learning">Machine Learning (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/math">Math (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/natural-language-processing">Natural Language Processing (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/software-engineering">Software Engineering (2)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/ai-agents">AI Agents (1)</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/category/ai-ml-based-applications">AI &amp; ML Based Applications (1)</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-block">
+<h2>Recent posts</h2>
+<ul>
+<li>
+<a href="https://vzhukov.dev/posts/2026/context-engineering-for-ai-agents">Context Engineering for <span class="caps">AI</span> Agents</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2026/few-shot-techniques-for-text-classification-using-llms">Few-Shot Techniques for Text Classification Using LLMs</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/data-grounded-country-comparison-the-service-idea">Data-Grounded Country Comparison: The Service Idea</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/essential-tools-for-machine-learning-engineers-my-real-world-stack">Essential Tools for Machine Learning Engineers: My Real-World Stack</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/fitting-the-player-ranking-model-a-maximum-likelihood-approach">Fitting the Player Ranking Model: A Maximum Likelihood Approach</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/what-i-have-learned-during-my-1275-day-streak-on-leetcode">What I have learned during my 1275+ day streak on LeetCode</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/mathematical-model-for-player-ranking">Mathematical Model for Player Ranking</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2025/approximating-skills-of-table-tennis-players-using-normal-distribution-introduction">Approximating Skills of Table Tennis Players Using Normal Distribution. Introduction</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/text-classification-challenge-with-extra-small-datasets-fine-tuning-versus-chatgpt">Text classification challenge with extra-small datasets: Fine-tuning versus ChatGPT</a>
+</li>
+<li>
+<a href="https://vzhukov.dev/posts/2023/choosing-the-best-architecture-for-your-text-classification-task">Choosing the best architecture for your text classification task</a>
+</li>
+</ul>
+</div>
+</aside>
+<footer id="site-footer">
+<p><a href="https://vzhukov.dev/posts">All posts</a> | <a href="https://vzhukov.dev/posts/tags">Tags</a> | <a href="https://vzhukov.dev/posts/categories">Categories</a></p>
+<p>Built with <a href="https://getpelican.com/" rel="noopener noreferrer" target="_blank">Pelican</a> using <a href="https://python.org/" rel="noopener noreferrer" target="_blank">Python</a> and <a href="https://github.com/hrw/pelican-haerwu-theme/" rel="noopener noreferrer" target="_blank">Haerwu theme</a>.</p>
+<p>Copyright by Viacheslav Zhukov. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/prismjs@1.30.0/plugins/toolbar/prism-toolbar.min.js,npm/prismjs@1.30.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+</body>
+</html>
