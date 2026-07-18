@@ -361,6 +361,55 @@ article.hentry {
 	line-height: 0;
 }
 
+.sidebar-referral + .sidebar-referral {
+  margin-top: 1rem;
+}
+
+a.referral-banner {
+	display: flex;
+	align-items: center;
+	gap: 0.65em;
+	box-sizing: border-box;
+	max-width: 300px;
+	margin: 0 auto;
+	padding: 0.8em 0.8em;
+	border: 1px solid;
+	border-radius: 10px;
+	text-decoration: none;
+	text-align: left;
+	line-height: 1.3;
+	transition: filter 0.15s ease;
+}
+
+a.referral-banner:hover {
+	filter: brightness(0.96);
+}
+
+a.referral-banner img {
+	width: 36px;
+	height: 36px;
+	margin: 0;
+	flex-shrink: 0;
+}
+
+.referral-banner-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.referral-banner-kicker {
+	font-size: 0.62rem;
+	font-weight: 700;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+
+.referral-banner-title {
+	font-size: 0.82rem;
+	font-weight: 600;
+}
+
 .entry-content > table {
 	width: 100%;
 
